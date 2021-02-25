@@ -9,6 +9,22 @@ const app = express();
 require('./util/passport')(passport);
 //const passport = require('./util/passport');
 
+const cors = require('cors');
+//TODO CHANGE LAST LINK TO THIS HEROKU DOMAIN
+const whitelist = ['http://localhost:3000', 'http://localhost:8080', 'https://shrouded-journey-38552.heroku']
+const corsOptions = {
+    origin: function (origin, callback) {
+        console.log("** Origin of request " + origin)
+        if (whitelist.indexOf(origin) !== -1 || !origin) {
+            console.log("Origin acceptable")
+            callback(null, true)
+        } else {
+            console.log("Origin rejected")
+            callback(new Error('Not allowed by CORS'))
+        }
+    }
+}
+app.use(cors(corsOptions))
 
 //import mongoose for DB
 //const mongoose = require('mongoose');
@@ -19,11 +35,11 @@ const controller= require('./controller/controller');
 controller.connectToMogoose(url);
 //import parser to handle json -> http
 const bodyParser = require('body-parser');
-const cors = require('cors');
+//const cors = require('cors');
 
 
 //MIDDLEWARES
-app.use(cors({credentials: true, origin:"http://localhost:3000"}));//enable front end calls from other domains
+//app.use(cors({credentials: true, origin:"http://localhost:3000"}));//enable front end calls from other domains
 app.use(bodyParser.json()); //route to body parser (able json -> http)
 app.use(bodyParser.urlencoded({extended: true}))
 
@@ -66,7 +82,17 @@ mongoose.connect(process.env.DB_CONNECTION,
 );
 */
 
+const path = require('path');
+if (process.env.NODE_ENV === 'production') {
+    // Serve any static files
+    app.use(express.static(path.join(__dirname, 'client/build')));
+// Handle React routing, return all requests to React app
+    app.get('*', function(req, res) {
+        res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+    });
+}
 
 //listen on port chosen by heroku. Other wise put a port for testing
 //process.env.PORT
-app.listen(3001);
+const PORT = process.env.PORT || 8080
+app.listen(PORT);
