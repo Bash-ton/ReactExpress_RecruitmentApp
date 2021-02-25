@@ -87,7 +87,7 @@ mongoose.connect(process.env.DB_CONNECTION,
 */
 
 const path = require('path');
-if (process.env.NODE_ENV === 'production') {
+if (true) {
     // Serve any static files
     app.use(express.static(path.join(__dirname, 'client/build')));
 // Handle React routing, return all requests to React app
