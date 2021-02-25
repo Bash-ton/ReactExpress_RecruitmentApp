@@ -11,7 +11,7 @@ require('./util/passport')(passport);
 
 const cors = require('cors');
 //TODO CHANGE LAST LINK TO THIS HEROKU DOMAIN
-const whitelist = ['http://localhost:3000', 'http://localhost:8080', 'https://shrouded-journey-38552.heroku']
+const whitelist = ['http://localhost:3000', 'http://localhost:8080', 'https://react-express-applicationapp.herokuapp.com/']
 const corsOptions = {
     origin: function (origin, callback) {
         console.log("** Origin of request " + origin)
@@ -67,10 +67,14 @@ app.use('/posts', postsRoute);//route to posts
 app.use('/auth', authRoute);//route to posts
 
 
-//ROUTES
-app.get('/', (req, res) => {
-    res.send('Automated heroku?');
-});
+    //ROUTES
+ /*   app.get('/', (req, res) => {
+        res.send('Automated heroku?');
+    });
+
+  */
+
+
 
 
 
