@@ -6,7 +6,7 @@ import axios from "axios";
         
         apiAxios() {
           return axios.create({
-            baseURL: "https://react-express-applicationapp.herokuapp.com/",
+            baseURL: "/",
             withCredentials: true,
             credentials: 'include',
             headers: {
