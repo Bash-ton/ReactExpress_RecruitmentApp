@@ -10,8 +10,7 @@ require('./util/passport')(passport);
 //const passport = require('./util/passport');
 
 const cors = require('cors');
-//TODO CHANGE LAST LINK TO THIS HEROKU DOMAIN
-const whitelist = ['http://localhost:3000', 'http://localhost:8080', 'https://react-express-applicationapp.herokuapp.com/']
+const whitelist = ['http://localhost:3000', 'http://localhost:8080', 'https://react-express-applicationapp.herokuapp.com']
 const corsOptions = {
     origin: function (origin, callback) {
         console.log("** Origin of request " + origin)
@@ -32,7 +31,7 @@ app.use(cors(corsOptions))
 require('dotenv/config');
 const url = process.env.DB_CONNECTION
 const controller= require('./controller/controller');
-controller.connectToMogoose(url).then();
+controller.connectToMogoose("mongodb+srv://new_user:new_user123@cluster.lufqv.mongodb.net/new_user?retryWrites=true&w=majority").then();
 //import parser to handle json -> http
 const bodyParser = require('body-parser');
 //const cors = require('cors');
