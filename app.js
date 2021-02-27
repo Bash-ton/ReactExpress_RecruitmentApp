@@ -32,7 +32,7 @@ app.use(cors(corsOptions))
 require('dotenv/config');
 const url = process.env.DB_CONNECTION
 const controller= require('./controller/controller');
-controller.connectToMogoose(url);
+controller.connectToMogoose(url).then();
 //import parser to handle json -> http
 const bodyParser = require('body-parser');
 //const cors = require('cors');

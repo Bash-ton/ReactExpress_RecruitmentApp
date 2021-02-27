@@ -7,8 +7,8 @@ import axios from "axios";
         apiAxios() {
           return axios.create({
             baseURL: "/",
-            withCredentials: true,
-            credentials: 'include',
+            //withCredentials: true,
+            //credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
             }
