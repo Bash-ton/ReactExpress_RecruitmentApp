@@ -31,7 +31,7 @@ app.use(cors(corsOptions))
 require('dotenv/config');
 const url = process.env.DB_CONNECTION
 const controller= require('./controller/controller');
-controller.connectToMogoose("mongodb+srv://new_user:new_user123@cluster.lufqv.mongodb.net/new_user?retryWrites=true&w=majority").then();
+controller.connectToMogoose(url).then();
 //import parser to handle json -> http
 const bodyParser = require('body-parser');
 //const cors = require('cors');
