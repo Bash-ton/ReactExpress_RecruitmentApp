@@ -149,6 +149,7 @@ const Authentication = ({apiCall}) => {
                             const instance = apiCall.apiAxios();
                             console.log(data);
 
+
                             instance.post('auth/register', {data})
                                 .then((response) => {
                                     console.log(response.headers["set-cookie"]);
@@ -174,7 +175,7 @@ const Authentication = ({apiCall}) => {
                       else{
                             const instance = apiCall.apiAxios();
                             console.log(data);
-
+/*
                             instance.post('auth/login', {email: data.email, password: data.password})
                                 .then((response1) => {
                                     // console.log(response.headers["set-cookie"]);
@@ -185,6 +186,9 @@ const Authentication = ({apiCall}) => {
                                 }, (error) => {
                                     console.log(error);
                                 });
+
+ */
+                            instance.get("posts").then(r => console.log(r))
 
                         } 
                     
