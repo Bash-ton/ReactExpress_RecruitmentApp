@@ -8,6 +8,7 @@ const ApplicationElement = ({item}) => {
     //call api and update status
     const updateStatus = (event) => {
         console.log(event.target.value)
+        console.log(event)
     }
 
     return (

@@ -131,30 +131,12 @@ const Authentication = ({apiCall}) => {
                          
                         let obj = {email: "test@kth.se", password:"test"};
                         let param = "auth/login";
-                        /*
-                        apiCall.apiCallPost(obj, param)
-                            .then(response => {console.log(response);apiCall.apiCallGet("posts").then(response => (console.log(response)))
-                                .catch(error => console.log(error)) })
-                            .catch(error => console.log( error))
 
-                         */
-                        /*
-                            withCredentials: true,
-                            credentials: 'same-origin',
-                            old url: baseURL: "https://restapikth.herokuapp.com/",
-                            local: baseURL: "http://localhost:3001/",
-*headers
-                         */
                         if(authStatus ===  "Sign up"){
                             const instance = apiCall.apiAxios();
-                            console.log(data);
-
 
                             instance.post('auth/register', {data})
                                 .then((response) => {
-                                    console.log(response.headers["set-cookie"]);
-                                    console.log(response)
-                                    console.log(document.cookie)
                                     //dispatch(signUP(response))
                                     const instance = apiCall.apiAxios();
                                     instance.post('auth/login', {email: data.email, password: data.password})
@@ -162,7 +144,7 @@ const Authentication = ({apiCall}) => {
                                             // console.log(response.headers["set-cookie"]);
                                             console.log(response1)
                                             // console.log(document.cookie)
-                                            dispatch(signUP(data))
+                                            dispatch(signUP(data)) //TODO change to signIn
                                            // instance.get("posts").then(r =>console.log(r) )
                                         }, (error) => {
                                             console.log(error);
@@ -181,7 +163,7 @@ const Authentication = ({apiCall}) => {
                                     // console.log(response.headers["set-cookie"]);
                                     console.log(response1)
                                     // console.log(document.cookie)
-                                    dispatch(testing())
+                                    dispatch(testing())//TODO change to signIn
                                     // instance.get("posts").then(r =>console.log(r) )
                                 }, (error) => {
                                     console.log(error);
