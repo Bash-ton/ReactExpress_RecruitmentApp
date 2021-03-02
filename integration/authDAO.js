@@ -26,6 +26,8 @@ const createUserDAO = async (req, res) => {
             email: req.body.data.email,
             firstName: req.body.data.firstName,
             lastName: req.body.data.lastName,
+            dateOfBirth:req.body.data.dateOfBirth,
+            role: req.body.data.role
         });
     
         bcrypt.genSalt(10, (err, salt) => {
