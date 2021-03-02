@@ -34,14 +34,15 @@ const createApplicationDAO = async  (req, res) => {
         });
 };
 
-const getApplicationWithIDDAO = async (req, res) => {
+const getApplicationWithEmailDAO = async (req, res) => {
     try{
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-        const posts = await Post.findById(req.params.postsID)
-        res.json(posts)
+        const post = await Post.findOne({ email: req.params.email });
+        if(post) return res.json(post);
+        else return res.status(400).json({"Error": "Application with email does not exist"});
     }catch (err){
         res.json(err)
     }
@@ -84,7 +85,7 @@ const updateApplicationStatusDAO = async (req, res) => {
 module.exports = {
     getAllApplicationsDAO,
     createApplicationDAO,
-    getApplicationWithIDDAO,
+    getApplicationWithEmailDAO,
     getAllApplicationsWithTwoCompetencesORDAO,
     getAllApplicationsWithOneSpecificCompetenceDAO,
     updateApplicationStatusDAO,

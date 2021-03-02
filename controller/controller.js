@@ -15,8 +15,8 @@ const createApplication = async  (req, res) => {
  return await postDAO.createApplicationDAO(req,res).catch((error)=>{throw error})
 }
 
-const getApplicationWithID = async (req, res) => {
-   return await postDAO.getAllApplicationsDAO(req,res).catch((error)=>{throw error})
+const getApplicationWithEmail = async (req, res) => {
+   return await postDAO.getApplicationWithEmailDAO(req,res).catch((error)=>{throw error})
 }
 
 const getAllApplicationsWithTwoCompetencesOR = async (req, res) => {
@@ -43,7 +43,7 @@ module.exports = {
     connectToMogoose,
     getAllApplications,
     createApplication,
-    getApplicationWithID,
+    getApplicationWithEmail,
     getAllApplicationsWithTwoCompetencesOR,
     getAllApplicationsWithOneSpecificCompetence,
     createUser,
