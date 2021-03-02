@@ -35,6 +35,10 @@ const createUser= async (req,res)=>{
     return await authDAO.createUserDAO(req,res).catch((error)=>{throw error})
 }
 
+const updateApplicationStatus = async (req, res) => {
+    return await postDAO.updateApplicationStatusDAO(req, res).catch((error) => {throw error})
+}
+
 module.exports = {
     connectToMogoose,
     getAllApplications,
@@ -44,5 +48,5 @@ module.exports = {
     getAllApplicationsWithOneSpecificCompetence,
     createUser,
     getAllUsers,
-
+    updateApplicationStatus,
 }

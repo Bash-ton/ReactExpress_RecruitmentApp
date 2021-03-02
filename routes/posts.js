@@ -14,6 +14,14 @@ router.get('/', ensureAuthentication, controller.getAllApplications);
 router.post(
     '/',
     ensureAuthentication, 
+    check('email').isEmail(),
+    check('email').custom(value => {
+        return Post.findOne({ email: value }).then(application => {
+          if (application) {
+            return Promise.reject('Application already exists');
+          }
+        });
+    }), 
     check('competence.*.name').not().isEmpty().stripLow(true).escape().withMessage("Provide competence name"),
     check('competence.*.year').isInt({ min: 0, max: 99 }),
     check('startPeriod').not().isEmpty().isDate().isAfter().withMessage("must be valid date"),
@@ -59,5 +67,19 @@ router.get('/competence=:competence1', ensureAuthentication, controller.getAllAp
 //TODO create function: DELETE ONE APPLICATION
 
 //TODO create function: UPDATE ONE APPLICATION
+router.post(
+    '/application', 
+    ensureAuthentication,
+    check('email').isEmail(),
+    check('email').custom(value => {
+        return Post.findOne({ email: value }).then(application => {
+          if (!application) {
+            return Promise.reject('Application does not exist');
+          }
+        });
+    }), 
+    check('status').toLowerCase().not().isEmpty().isIn(['accepted', 'rejected', 'unhandled']),
+    controller.updateApplicationStatus
+);
 
 module.exports = router;
