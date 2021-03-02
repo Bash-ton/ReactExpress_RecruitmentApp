@@ -73,8 +73,9 @@ const updateApplicationStatusDAO = async (req, res) => {
         }
         let filter = {email: req.body.email};
         let update = {status: req.body.status}; 
-        const post = await Post.findOneAndUpdate(filter, update);
-        res.json(post);
+        await Post.findOneAndUpdate(filter, update);
+        const newPost = await Post.findOne(filter);
+        res.json(newPost);
     } catch (error) {
         res.json(error)
     }

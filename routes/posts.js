@@ -18,7 +18,7 @@ router.post(
     check('email').custom(value => {
         return Post.findOne({ email: value }).then(application => {
           if (application) {
-            return Promise.reject('Application already exists');
+            return Promise.reject('Application for applicant already exists');
           }
         });
     }), 
