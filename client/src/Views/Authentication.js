@@ -4,7 +4,7 @@ import {TextField, Button, Select, MenuItem} from "@material-ui/core";
 import * as Yup from "yup"
 import { useDispatch, useSelector } from "react-redux";
 import UserReducer from "../Model/Redux/Reducers/UserReducer";
-import {signUP, testing} from "../Model/Redux/Actions/testLogInLocalStorage";
+import {signIn, signUP, testing} from "../Model/Redux/Actions/testLogInLocalStorage";
 import ApiCall from "../Model/apiCall";
 import axios from "axios";
 const Authentication = ({apiCall}) => {
@@ -144,7 +144,8 @@ const Authentication = ({apiCall}) => {
                                             // console.log(response.headers["set-cookie"]);
                                             console.log(response1)
                                             // console.log(document.cookie)
-                                            dispatch(signUP(data)) //TODO change to signIn
+                                            dispatch(signIn(response1))
+                                          //  dispatch(signUP(data)) //TODO change to signIn
                                            // instance.get("posts").then(r =>console.log(r) )
                                         }, (error) => {
                                             console.log(error);
@@ -163,7 +164,8 @@ const Authentication = ({apiCall}) => {
                                     // console.log(response.headers["set-cookie"]);
                                     console.log(response1)
                                     // console.log(document.cookie)
-                                    dispatch(testing())//TODO change to signIn
+                                    dispatch(signIn(response1))
+                                   // dispatch(testing())//TODO change to signIn
                                     // instance.get("posts").then(r =>console.log(r) )
                                 }, (error) => {
                                     console.log(error);

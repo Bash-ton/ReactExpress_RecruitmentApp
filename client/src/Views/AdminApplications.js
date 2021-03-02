@@ -3,7 +3,7 @@ import {Field, Form, Formik, useField} from "formik";
 import {Button, Checkbox, FormControlLabel} from "@material-ui/core";
 import ApplicationList from "./ApplicationList";
 import {useSelector} from "react-redux";
-import axios from "axios";
+
 
 const AdminApplications = ({apiCall}) => {
     const [result, setResult] = useState([])
@@ -37,27 +37,12 @@ const AdminApplications = ({apiCall}) => {
                         onSubmit={(data, {setSubmitting}) => {
                             setSubmitting(true);
                             let param = "posts"
-                            console.log(data.competences.length)
-                            console.log(data.competences[0])
-                            console.log(data.competences[1])
                             if (data.competences.length === 2) {
                                 param = "posts/competence/or=" + data.competences[0] + "&=" + data.competences[1];
                             } else if (data.competences.length === 1) {
                                 param = "posts/competence=" + data.competences[0];
                             }
 
-                            /*
-                            apiCall.apiCallGet(param)
-                                .then(response => (setSubmitting(false), setResult(response)))
-                                .catch(error => console.log(error))
-                                old url: baseURL: "https://restapikth.herokuapp.com/",
-                                local: baseURL: "http://localhost:3001/",
-
-                               header: 'Access-Control-Allow-Origin' : '*',
-                                    'Access-Control-Allow-Methods':'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-                             */
-
-                            console.log(param)
                             const instance = apiCall.apiAxios();
                             instance.get(param).then(r =>( setSubmitting(false), setResult(r.data),setResult(r.data)))
                         }}
