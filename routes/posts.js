@@ -18,7 +18,7 @@ router.post(
     check('email').custom(value => {
         return Post.findOne({ email: value }).then(application => {
           if (application) {
-            return Promise.reject('Application already exists');
+            return Promise.reject('Application for applicant already exists');
           }
         });
     }), 
@@ -39,10 +39,10 @@ router.post(
 //format: GET: http://localhost:3000/posts/postID={ID}
 //exempel GET: http://localhost:3000/posts/postID=6021519f11506e1350b46b11
 router.get(
-    '/postID=:postsID',
+    '/postEmail=:email',
     ensureAuthentication,
-    check('postsID').not().isEmpty().isAlphanumeric(),
-    controller.getApplicationWithID
+    check('email').isEmail(),
+    controller.getApplicationWithEmail
 );
 
 
