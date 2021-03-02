@@ -25,7 +25,7 @@ const UserSchema = new  mongoose.Schema({
     },
     dateOfBirth: {
         type: [{year:Number, month:Number, day:Number}],
-        required: false
+        required: true,
     },
     role:{
         type:String,

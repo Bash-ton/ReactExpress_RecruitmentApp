@@ -16,7 +16,7 @@ router.post('/login',
   function(req, res) {
     // If this function gets called, authentication was successful.
     // `req.user` contains the authenticated user.
-    res.status(200).json({"role": req.user.role,"email":req.user.email, "username":req.user.username, "firstName": req.user.firstName, "lastName": req.user.lastName, "dateOfBirth":req.user.dateOfBirth });
+    res.status(200).json({"role": req.user.role,"email":req.user.email, "username":req.user.username, "firstName": req.user.firstName, "lastName": req.user.lastName, "dateOfBirth":req.user.dateOfBirth[0] });
 });
 
 
