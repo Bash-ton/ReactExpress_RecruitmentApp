@@ -71,7 +71,7 @@ const AdminApplications = ({apiCall}) => {
 
                         )}
                     </Formik>
-                    {(result.length > 0) ? <ApplicationList applications={result}/> : ""}
+                    {(result.length > 0) ? <ApplicationList apiCall={apiCall} applications={result}/> : ""}
                 </div>
                 : ""}
         </div>

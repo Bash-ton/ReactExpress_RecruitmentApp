@@ -7,7 +7,7 @@ import "./css/ApplicationList.css"
  * @param applications an object containing all applications that the page should render in a list
  * @returns {JSX.Element} renders a list header and calls the <ApplicationElement/> component to render all rows
  */
-const ApplicationList = ({applications}) => {
+const ApplicationList = ({apiCall, applications} ) => {
 
     return(
         <table className="content-table">
@@ -26,7 +26,7 @@ const ApplicationList = ({applications}) => {
             <tbody>
             {applications?.map(item =>{
                 return(
-                    <ApplicationElement item={item}/>
+                    <ApplicationElement apiCall={apiCall} item={item}/>
                 )
             })}
             </tbody>
