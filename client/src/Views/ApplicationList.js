@@ -2,9 +2,13 @@ import React from "react"
 import ApplicationElement from "./ApplicationElement";
 import "./css/ApplicationList.css"
 
-const ApplicationList = ({applications}) => {
+/**
+ * The admin application list header.
+ * @param applications an object containing all applications that the page should render in a list
+ * @returns {JSX.Element} renders a list header and calls the <ApplicationElement/> component to render all rows
+ */
+const ApplicationList = ({apiCall, applications} ) => {
 
-    console.log(applications)
     return(
         <table className="content-table">
             <thead>
@@ -22,7 +26,7 @@ const ApplicationList = ({applications}) => {
             <tbody>
             {applications?.map(item =>{
                 return(
-                    <ApplicationElement item={item}/>
+                    <ApplicationElement apiCall={apiCall} item={item}/>
                 )
             })}
             </tbody>

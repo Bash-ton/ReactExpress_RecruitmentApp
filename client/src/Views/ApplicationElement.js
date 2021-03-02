@@ -1,14 +1,30 @@
 import React from "react";
-//TODO GET( lname and fname and status ) aswell
-const ApplicationElement = ({item}) => {
+import {signIn} from "../Model/Redux/Actions/testLogInLocalStorage";
+//TODO call API to change status
 
-    //TODO CHANGE {testing} to directly look inside item from api
-    const testing = "unhandled";
+/**
+ * This component renders one row in the admin applications list. Each row shows all relevant information about said application
+ * @param item all info about one application ie one row in the list
+ * @returns {JSX.Element} renders one row in the admin applications list
+ */
+const ApplicationElement = ({apiCall, item}) => {
 
-    //call api and update status
     const updateStatus = (event) => {
-        console.log(event.target.value)
+        console.log(event.target.value)//the new status
+
+        console.log(item)//this item/application information
+
+
+        const instance = apiCall.apiAxios();
+        instance.post('posts/application', {status: event.target.value, email: item.email})
+            .then((response) => {
+                console.log(response)
+
+            }, (error) => {
+                console.log(error);
+            });
     }
+
 
     return (
         <tr key={item.id}>
@@ -29,15 +45,15 @@ const ApplicationElement = ({item}) => {
             <td>{item.date}</td>
             <td><select name="status" onChange={(event)=>{ updateStatus(event) }}>
 
-                {(testing === "unhandled")?
+                {(item.status === "unhandled")?
                     <option selected="selected" value="unhandled">unhandled</option>
                 :<option value="unhandled">unhandled</option>}
 
-                {(testing === "rejected")?
+                {(item.status === "rejected")?
                     <option selected="selected" value="rejected">rejected</option>
                     :<option value="rejected">rejected</option>}
 
-                {(testing === "accepted")?
+                {(item.status === "accepted")?
                     <option selected="selected" value="accepted">accepted</option>
                     :<option value="accepted">accepted</option>}
             </select></td>
