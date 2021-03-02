@@ -14,7 +14,10 @@ import SignUpAdmin from "./Views/SignUpAdmin";
 import AdminApplications from "./Views/AdminApplications";
 import Header from "./Views/Header";
 
-
+/**
+ * Main file for the frontend
+ * Handles initial import of the model and routing of the frontend app
+ */
 class App extends Component {
     constructor(props) {
         super(props);

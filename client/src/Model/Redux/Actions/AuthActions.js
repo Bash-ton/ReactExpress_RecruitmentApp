@@ -1,5 +1,8 @@
-
-
+/**
+ * Redux action for signup
+ * @param user object containing user information
+ * @returns {function(*, *): void} a dispatch call to {UserReducer}
+ */
 export const signIn = (user) => {
     console.log(user.data)
     debugger
@@ -8,10 +11,11 @@ export const signIn = (user) => {
     }
 }
 
-
-export const testingSignOut = () => {
-
-
+/**
+ * Redux action that sing out a user
+ * @returns {function(*, *): void} a dispatch call to {UserReducer}
+ */
+export const signOut = () => {
     return (dispatch, getState) => {
         dispatch({type:"LOG_OUT_USER"})
     }

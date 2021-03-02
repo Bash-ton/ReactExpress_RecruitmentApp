@@ -1,11 +1,16 @@
 import axios from "axios";
-  export default class ApiCall{
-        constructor(){
 
-        }
-        
-        apiAxios() {
-          return axios.create({
+/**
+ * Model that handles all axios HTTP calls to the express API.
+ * Contains the base URL to the express API
+ */
+export default class ApiCall {
+    constructor() {
+
+    }
+
+    apiAxios() {
+        return axios.create({
             baseURL: "/",
             withCredentials: true,
             credentials: 'include',
@@ -13,8 +18,8 @@ import axios from "axios";
                 'Content-Type': 'application/json',
             }
         });
-        }
+    }
 
 
-      }
+}
       

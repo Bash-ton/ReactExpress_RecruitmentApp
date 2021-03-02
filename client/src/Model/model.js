@@ -1,3 +1,6 @@
+/**
+ * Model that contains all available skills and current skills stored in the frontend
+ */
 export default class model{
     constructor(){
         this.myExpertise = [];

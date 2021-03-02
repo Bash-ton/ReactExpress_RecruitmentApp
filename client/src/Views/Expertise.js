@@ -1,10 +1,18 @@
 import React, {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
 
+/**
+ * Renders all views related to the client page.
+ * @param model a model document used to get available skills and handle all skills in current application in progress before submitting
+ * @param apiCall a model document handling all axios calls to the express API
+ * @returns {JSX.Element} renders all views on the client page
+ */
 function Expertise({model, apiCall}) {
+    //constants from redux store
     const isLoggedIn = useSelector(state => state.UserReducer.userInfo[0].isLoggedIn);
     const role = useSelector(state => state.UserReducer.userInfo[0].role);
 
+    //lifecycle methods
     useEffect(()=>{
         if( (role !== "client") || (isLoggedIn === false) )
             window.location = "/"
@@ -27,6 +35,7 @@ function Expertise({model, apiCall}) {
     //Ta bort: Modellen bestämmer om den vill läsa från localstorage eller inte.......
     useEffect(() => localStorage.setItem('formData', myExpertise));
 
+    // eventhandlers
     //remove selected state when chosen?
     const removeSelectedExpertise = e => {
         const exp = allExpertise.filter(name => name !== e);
@@ -60,6 +69,12 @@ function Expertise({model, apiCall}) {
     )
 }
 
+/**
+ * This component renders the current skills in progress before submitting it
+ * @param myExpertise object that contains all skills currently in the application
+ * @param removeExpertise method used to remove skills from application
+ * @returns {JSX.Element} renders a list of current skills in application
+ */
 export const ExpertiseView = ({myExpertise, removeExpertise}) => (
     <div>
         {myExpertise.map(e => 
@@ -75,7 +90,14 @@ export const ExpertiseView = ({myExpertise, removeExpertise}) => (
 );
 
 
-
+/**
+ * A form that lets user input all relevant information used to create an application
+ * @param expertise all currently available skills to choose from in the application
+ * @param addExpertise method used to add a skill to the application
+ * @param done method used so submit the application
+ * @param removeOption method that removes one available skill from the {expertise} object when that skill already has been added to the form
+ * @returns {JSX.Element} render the form to input skills to the application
+ */
 export const AddExpertiseForm = ({expertise, addExpertise, done, removeOption}) => {
 
     const userInfo = useSelector(state => state.UserReducer.userInfo)

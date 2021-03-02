@@ -11,7 +11,12 @@ const initState =
             }
         ]
     }
-
+/**
+ * A reducer that handles login and signup
+ * @param state the current state of this reducer
+ * @param action the action that is to be performed
+ * @returns {{userInfo: [{fname: string|*, lname: string|*, role: *, isLoggedIn: boolean, dateOfBirth: *, email: *}]}}
+ */
 const UserReducer = (state = initState, action) => {
     switch (action.type) {
         case "LOG_IN_USER":
@@ -44,22 +49,6 @@ const UserReducer = (state = initState, action) => {
                 ]
 
             };
-        case "SIGN_UP_USER"://TODO remove this
-            return {
-
-                userInfo: [
-                    {
-                        isLoggedIn: true,
-                        role: action.role,
-                        fname: action.fname,
-                        lname: action.lname,
-                        dateOfBirth: action.dateOfBirth,
-                        email: "",
-                    }
-                ]
-
-            };
-            
         default:
             return state;
 

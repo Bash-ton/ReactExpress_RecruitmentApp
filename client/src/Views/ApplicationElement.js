@@ -1,20 +1,15 @@
 import React from "react";
-import {signIn} from "../Model/Redux/Actions/testLogInLocalStorage";
-//TODO call API to change status
 
 /**
  * This component renders one row in the admin applications list. Each row shows all relevant information about said application
+ * @param apiCall a model document containing axios api calls to the express app
  * @param item all info about one application ie one row in the list
  * @returns {JSX.Element} renders one row in the admin applications list
+ * @constructor
  */
 const ApplicationElement = ({apiCall, item}) => {
 
     const updateStatus = (event) => {
-        console.log(event.target.value)//the new status
-
-        console.log(item)//this item/application information
-
-
         const instance = apiCall.apiAxios();
         instance.post('posts/application', {status: event.target.value, email: item.email})
             .then((response) => {

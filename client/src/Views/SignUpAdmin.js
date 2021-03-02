@@ -2,10 +2,8 @@ import React from 'react'
 import {Field, Form, Formik} from "formik";
 import { TextField, Button } from "@material-ui/core";
 
-
+//TODO not used remove this later
 const SignUpAdmin = () =>{
-
-
 
     //event handlers
     const changeView = (url) => {

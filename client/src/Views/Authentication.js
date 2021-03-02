@@ -3,7 +3,8 @@ import {Form, Formik, useField} from "formik";
 import {TextField, Button, Select, MenuItem} from "@material-ui/core";
 import * as Yup from "yup"
 import {useDispatch, useSelector} from "react-redux";
-import {signIn} from "../Model/Redux/Actions/testLogInLocalStorage";
+import {signIn} from "../Model/Redux/Actions/AuthActions";
+
 //TODO remove the <Pre-tags> when done testing
 
 /**
@@ -225,10 +226,7 @@ const Authentication = ({apiCall}) => {
                             </Form>
                         )}
                     </Formik>
-                    <div onClick={() => {
-                        changeView("/admin/signup")
-                    }}>sign up new admin
-                    </div>
+
 
                 </div>
                 : ""}
