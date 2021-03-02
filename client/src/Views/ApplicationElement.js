@@ -1,15 +1,20 @@
 import React from "react";
-//TODO GET( lname and fname and status ) aswell
+//TODO CHANGE {testing} to directly look inside item from api
+
+/**
+ * This component renders one row in the admin applications list. Each row shows all relevant information about said application
+ * @param item all info about one application ie one row in the list
+ * @returns {JSX.Element} renders one row in the admin applications list
+ */
 const ApplicationElement = ({item}) => {
 
-    //TODO CHANGE {testing} to directly look inside item from api
+    //TODO change to reading status from expres and sending status to express
     const testing = "unhandled";
-
-    //call api and update status
     const updateStatus = (event) => {
         console.log(event.target.value)
         console.log(event)
     }
+
 
     return (
         <tr key={item.id}>
