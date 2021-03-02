@@ -46,7 +46,7 @@ function Expertise({model, apiCall}) {
                                   done={(info) => instance.post('posts',{
                                       startPeriod: info.start,
                                       endPeriod: info.end,
-                                      dateOfBirth: info.dateOfBirth,
+                                      dateOfBirth: {year: info.dateOfBirth.year, month: info.dateOfBirth.month, day:info.dateOfBirth.day},
                                       status: "unhandled",
                                       firstName: info.fname,
                                       lastName: info.lname,
@@ -60,7 +60,7 @@ function Expertise({model, apiCall}) {
     )
 }
 
-const ExpertiseView = ({myExpertise, removeExpertise}) => (
+export const ExpertiseView = ({myExpertise, removeExpertise}) => (
     <div>
         {myExpertise.map(e => 
             <tbody>
@@ -76,7 +76,7 @@ const ExpertiseView = ({myExpertise, removeExpertise}) => (
 
 
 
-const AddExpertiseForm = ({expertise, addExpertise, done, removeOption}) => {
+export const AddExpertiseForm = ({expertise, addExpertise, done, removeOption}) => {
 
     const userInfo = useSelector(state => state.UserReducer.userInfo)
    console.log(userInfo)
