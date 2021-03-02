@@ -16,6 +16,7 @@ const createApplicationDAO = async  (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
     const post = new Post({
+        email: req.body.email,
         competence: req.body.competence,
         startPeriod: req.body.startPeriod,
         endPeriod: req.body.endPeriod,
@@ -63,13 +64,27 @@ const getAllApplicationsWithOneSpecificCompetenceDAO = async (req, res) => {
         res.json(err)
     }
 }
+
+const updateApplicationStatusDAO = async (req, res) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        let filter = {email: req.body.email};
+        let update = {status: req.body.status}; 
+        const post = await Post.findOneAndUpdate(filter, update);
+        res.json(post);
+    } catch (error) {
+        res.json(error)
+    }
+}
+
 module.exports = {
     getAllApplicationsDAO,
     createApplicationDAO,
     getApplicationWithIDDAO,
     getAllApplicationsWithTwoCompetencesORDAO,
-    getAllApplicationsWithOneSpecificCompetenceDAO
-
-   
-
+    getAllApplicationsWithOneSpecificCompetenceDAO,
+    updateApplicationStatusDAO,
 }
