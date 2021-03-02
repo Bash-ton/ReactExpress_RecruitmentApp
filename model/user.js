@@ -27,6 +27,10 @@ const UserSchema = new  mongoose.Schema({
         type: [{year:Number, month:Number, day:Number}],
         required: false
     },
+    role:{
+        type:String,
+        default: "client"
+    }
 });
 
 const User = mongoose.model('users',UserSchema);
