@@ -13,7 +13,7 @@ function Expertise({model, apiCall}) {
     const role = useSelector(state => state.UserReducer.userInfo[0].role);
     const [hasApplication, setHasApplication] = useState(false);
 
-    //testing TODO remove
+    //event handler checking if user already has made an application
     const instance2 = apiCall.apiAxios();
     instance2.get("posts/postEmail=client@kth.se").then(r => (
         console.log(r.status),
@@ -55,7 +55,7 @@ function Expertise({model, apiCall}) {
         setExpertice(exp);
     }
     const instance = apiCall.apiAxios();
-    //TODO add user fname, lname, date of birth and start/end period to API call
+
     return (
         <div>
             {((role === "client") && (isLoggedIn === true)) ?
@@ -67,7 +67,7 @@ function Expertise({model, apiCall}) {
                                 setExpertice([...allExpertise, n])
                             }}/>
                             <AddExpertiseForm expertise={allExpertise}
-                                              addExpertise={(t, y) => model.addExpertise(t, y)}//TODO add fields: {fname: info.fname, lname: info.lname, dateOfBirth: info.dateOfBirth}
+                                              addExpertise={(t, y) => model.addExpertise(t, y)}
                                               done={(info) => instance.post('posts', {
                                                   startPeriod: info.start,
                                                   endPeriod: info.end,
