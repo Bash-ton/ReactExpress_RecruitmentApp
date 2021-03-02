@@ -1,16 +1,13 @@
-export const testing = () => {
+
+
+export const signIn = (user) => {
+    console.log(user.data)
+    debugger
     return (dispatch, getState) => {
-        dispatch({type:"LOG_IN_USER", role:"admin", fname:"seb", lname:"paz", dateOfBirth: "2020-12-12"})
+        dispatch({type:"LOG_IN_USER", role:user.data.role, fname:user.data.firstName, lname: user.data.lastName, dateOfBirth: user.data.dateOfBirth, email: user.data.email})
     }
 }
 
-export const signUP = (user) => {
-    console.log(user);
-
-    return (dispatch, getState) => {
-        dispatch({type:"SIGN_UP_USER", role: "client", fname: user.firstName, lname: user.lastName, dateOfBirth: user.dateOfBirth})
-    }
-}
 
 export const testingSignOut = () => {
 

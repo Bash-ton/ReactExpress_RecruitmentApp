@@ -7,6 +7,7 @@ const initState =
                 fname: "",
                 lname: "",
                 dateOfBirth: "",
+                email: "",
             }
         ]
     }
@@ -23,6 +24,7 @@ const UserReducer = (state = initState, action) => {
                         fname: action.fname,
                         lname: action.lname,
                         dateOfBirth: action.dateOfBirth,
+                        email: action.email,
                     }
                 ]
 
@@ -37,11 +39,12 @@ const UserReducer = (state = initState, action) => {
                         fname: "",
                         lname: "",
                         dateOfBirth: "",
+                        email: "",
                     }
                 ]
 
             };
-        case "SIGN_UP_USER":
+        case "SIGN_UP_USER"://TODO remove this
             return {
 
                 userInfo: [
@@ -51,6 +54,7 @@ const UserReducer = (state = initState, action) => {
                         fname: action.fname,
                         lname: action.lname,
                         dateOfBirth: action.dateOfBirth,
+                        email: "",
                     }
                 ]
 

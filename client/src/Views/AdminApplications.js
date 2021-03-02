@@ -1,23 +1,31 @@
 import React, {useEffect, useState} from "react"
-import {Field, Form, Formik, useField} from "formik";
+import { Form, Formik, useField } from "formik";
 import {Button, Checkbox, FormControlLabel} from "@material-ui/core";
 import ApplicationList from "./ApplicationList";
 import {useSelector} from "react-redux";
-import axios from "axios";
 
+/**
+ * Handles the admin page.
+ * A logged in admin may go through all applications and sort by skills
+ * The admin can also give a status to an application (accepted, unhandled, rejected)
+ * @param apiCall model that handles axios api calls to the backend REST API
+ * @returns {JSX.Element} renders the Admin page showing applications
+ */
 const AdminApplications = ({apiCall}) => {
+    //constants from useState and redux
     const [result, setResult] = useState([])
-
     const isLoggedIn = useSelector(state => state.UserReducer.userInfo[0].isLoggedIn);
     const role = useSelector(state => state.UserReducer.userInfo[0].role);
 
 
+    //life cycle methods
     useEffect(() => {
         if ((role !== "admin") || (isLoggedIn === false))
             window.location = "/"
     }, [isLoggedIn, role])
 
 
+    //custom formik components
     const CustomCheckboxes = ({label, ...props}) => {
         const [field] = useField(props);
         return <FormControlLabel {...field} control={<Checkbox/>} label={label}/>;
@@ -37,27 +45,12 @@ const AdminApplications = ({apiCall}) => {
                         onSubmit={(data, {setSubmitting}) => {
                             setSubmitting(true);
                             let param = "posts"
-                            console.log(data.competences.length)
-                            console.log(data.competences[0])
-                            console.log(data.competences[1])
                             if (data.competences.length === 2) {
                                 param = "posts/competence/or=" + data.competences[0] + "&=" + data.competences[1];
                             } else if (data.competences.length === 1) {
                                 param = "posts/competence=" + data.competences[0];
                             }
 
-                            /*
-                            apiCall.apiCallGet(param)
-                                .then(response => (setSubmitting(false), setResult(response)))
-                                .catch(error => console.log(error))
-                                old url: baseURL: "https://restapikth.herokuapp.com/",
-                                local: baseURL: "http://localhost:3001/",
-
-                               header: 'Access-Control-Allow-Origin' : '*',
-                                    'Access-Control-Allow-Methods':'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-                             */
-
-                            console.log(param)
                             const instance = apiCall.apiAxios();
                             instance.get(param).then(r =>( setSubmitting(false), setResult(r.data),setResult(r.data)))
                         }}

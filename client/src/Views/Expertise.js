@@ -50,7 +50,8 @@ function Expertise({model, apiCall}) {
                                       status: "unhandled",
                                       firstName: info.fname,
                                       lastName: info.lname,
-                                      competence: myExpertise
+                                      competence: myExpertise,
+                                      email: info.email,
                                   })}
                                   removeOption={(name) => removeSelectedExpertise(name)}
                 /></div>
@@ -84,7 +85,7 @@ const AddExpertiseForm = ({expertise, addExpertise, done, removeOption}) => {
         if(ans === true){
            //console.log(userInfo[0].dateOfBirth);
            //debugger;
-            done({start: start, end: end, fname: userInfo[0].fname, lname: userInfo[0].lname, status: "unhandled", dateOfBirth:userInfo[0].dateOfBirth});
+            done({start: start, end: end, fname: userInfo[0].fname, lname: userInfo[0].lname, status: "unhandled", dateOfBirth:userInfo[0].dateOfBirth, email: userInfo[0].email});
         }
     }
 
