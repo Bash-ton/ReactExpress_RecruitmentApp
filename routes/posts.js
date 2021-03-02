@@ -7,10 +7,26 @@ const { ensureAuthentication } = require('../util/ensureAuth');
 //import controllers here
 const controller = require('../controller/controller');
 
-//GET ALL APPLICATIONS
+/**
+ * GET /posts
+ * @summary GET request for retrieving all application
+ * @requires express-validator
+ * @function
+ * @param {string} path - Express path.
+ * @param {callback} controller.createApplication - Express middleware.
+ * @param {callback} ensureAuthentication - Authentication middleware
+ */
 router.get('/', ensureAuthentication, controller.getAllApplications);
 
-//CREATE AN APPLICATION
+/**
+ * POST /posts
+ * @summary Post request for creating a new application
+ * @requires express-validator
+ * @function
+ * @param {string} path - Express path.
+ * @param {callback} controller.createApplication - Express middleware.
+ * @param {callback} ensureAuthentication - Authentication middleware
+ */
 router.post(
     '/',
     ensureAuthentication, 
@@ -35,9 +51,15 @@ router.post(
     controller.createApplication
 );
 
-//GET AN APPLICATION WITH SPECIFIC ID
-//format: GET: http://localhost:3000/posts/postID={ID}
-//exempel GET: http://localhost:3000/posts/postID=6021519f11506e1350b46b11
+/**
+ * POST /posts/postEmail=test@test.com
+ * @summary Post request for updating an applications status
+ * @requires express-validator
+ * @function
+ * @param {string} path - Express path.
+ * @param {callback} controller.getApplicationWithEmail - Express middleware.
+ * @param {callback} ensureAuthentication - Authentication middleware
+ */
 router.get(
     '/postEmail=:email',
     ensureAuthentication,
@@ -46,27 +68,41 @@ router.get(
 );
 
 
-//TODO ADD GET METHOD TO GET ALL APPLICATIONS WITH 2 SPECIFIC APPLICATIONS (AND function)
-//
-//HERE
-
-
-
-//GET ALL APPLICATIONS WITH 2 SPECIFIC COMPETENCES (OR function)
-//format: GET: http://localhost:3000/posts/competence={value}or{value}
-//exempel GET: http://localhost:3000/posts/competence/or=comp1&=comp6
+/**
+ * GET /posts/competence/or=comp1&=comp6
+ * @summary GET request for creating a new application
+ * @requires express-validator
+ * @function
+ * @param {string} path - Express path.
+ * @param {callback} controller.getAllApplicationsWithTwoCompetencesOR - Express middleware.
+ * @param {callback} ensureAuthentication - Authentication middleware
+ */
 router.get('/competence/or=:competence1&=:competence2', ensureAuthentication, controller.getAllApplicationsWithTwoCompetencesOR);
 
-//GET ALL APPLICATIONS WITH ONE SPECIFIC COMPETENCE
-//format: GET: http://localhost:3000/posts/competence={value}
-//exempel GET: http://localhost:3000/posts/competence=comp1
+/**
+ * GET /posts/competence=exampleCompetence
+ * @summary GET request for creating a new application
+ * @requires express-validator
+ * @function
+ * @param {string} path - Express path.
+ * @param {callback} controller.getAllApplicationsWithOneSpecificCompetence - Express middleware.
+ * @param {callback} ensureAuthentication - Authentication middleware
+ */
 router.get('/competence=:competence1', ensureAuthentication, controller.getAllApplicationsWithOneSpecificCompetence);
 
 //TODO create function: DELETE ALL APPLICATIONS
 
 //TODO create function: DELETE ONE APPLICATION
 
-//TODO create function: UPDATE ONE APPLICATION
+/**
+ * POST /posts/application
+ * @summary Post request for updating an applications status
+ * @requires express-validator
+ * @function
+ * @param {string} path - Express path.
+ * @param {callback} controller.updateApplicationStatus - Express middleware.
+ * @param {callback} ensureAuthentication - Authentication middleware
+ */
 router.post(
     '/application', 
     ensureAuthentication,

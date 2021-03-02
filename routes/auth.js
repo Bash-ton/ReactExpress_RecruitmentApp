@@ -11,6 +11,14 @@ const controller = require('../controller/controller');
 //import models here
 const User = require('../model/user');
 
+/**
+ * POST /auth/login
+ * @summary POST request for authenticating a user
+ * @requires express-validator
+ * @function
+ * @param {string} path - Express path.
+ * @param {callback} controller.getAllUsers - Express middleware.
+ */
 router.post('/login',
   passport.authenticate('local'),
   function(req, res) {
@@ -20,10 +28,25 @@ router.post('/login',
 });
 
 
-//get all users
+/**
+ * GET /auth
+ * @summary GET request for getting all users
+ * @requires express-validator
+ * @function
+ * @param {string} path - Express path.
+ * @param {callback} controller.getAllUsers - Express middleware.
+ */
 router.get('/', controller.getAllUsers);
 
-//create user
+
+/**
+ * POST /auth/register
+ * @summary POST request for registering a new user
+ * @requires express-validator
+ * @function
+ * @param {string} path - Express path.
+ * @param {callback} controller.createUser - Express middleware.
+ */
 router.post(
     '/register',
     check('data.email').isEmail(),

@@ -9,6 +9,17 @@ const getAllApplicationsDAO = async (req, res) => {
         res.json({message: err});
     }
 }
+
+/**
+ * Creates a new application and saves to Database
+ * @module createApplicationDAO
+ * @function
+ * @requires express-validator
+ * @param {Object} req The request.
+ * @param {Object} res The response.
+ * @param {Object} req.body The JSON payload.
+ * @returns {undefined}
+ */
 const createApplicationDAO = async  (req, res) => {
     console.log(req.body);
     const errors = validationResult(req);
@@ -34,6 +45,16 @@ const createApplicationDAO = async  (req, res) => {
         });
 };
 
+/**
+ * Gets a application with a given email
+ * @module getApplicationWithEmailDAO
+ * @function
+ * @requires express-validator
+ * @param {Object} req The request.
+ * @param {Object} res The response.
+ * @param {Object} req.body The JSON payload.
+ * @returns {undefined}
+ */
 const getApplicationWithEmailDAO = async (req, res) => {
     try{
         const errors = validationResult(req);
@@ -48,6 +69,15 @@ const getApplicationWithEmailDAO = async (req, res) => {
     }
 }
 
+/**
+ * Get applications with two specified competences
+ * @module getAllApplicationsWithOneSpecificCompetenceDAO
+ * @function
+ * @param {Object} req The request.
+ * @param {Object} res The response.
+ * @param {Object} req.body The JSON payload.
+ * @returns {undefined}
+ */
 const getAllApplicationsWithTwoCompetencesORDAO = async (req, res) => {
     try{
         const posts = await Post.find({competence: {"$elemMatch": {name: {"$in" :[req.params.competence1, req.params.competence2]}}}} )
@@ -57,6 +87,15 @@ const getAllApplicationsWithTwoCompetencesORDAO = async (req, res) => {
     }
 }
 
+/**
+ * Get applications with a given competence
+ * @module getAllApplicationsWithOneSpecificCompetenceDAO
+ * @function
+ * @param {Object} req The request.
+ * @param {Object} res The response.
+ * @param {Object} req.body The JSON payload.
+ * @returns {undefined}
+ */
 const getAllApplicationsWithOneSpecificCompetenceDAO = async (req, res) => {
     try{
         const posts = await Post.find({competence: {"$elemMatch": {name: req.params.competence1}}} )
@@ -66,6 +105,16 @@ const getAllApplicationsWithOneSpecificCompetenceDAO = async (req, res) => {
     }
 }
 
+/**
+ * Update a application status with a given email
+ * @module updateApplicationStatusDAO
+ * @function
+ * @requires express-validator
+ * @param {Object} req The request.
+ * @param {Object} res The response.
+ * @param {Object} req.body The JSON payload.
+ * @returns {undefined}
+ */
 const updateApplicationStatusDAO = async (req, res) => {
     try {
         const errors = validationResult(req);
