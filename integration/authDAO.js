@@ -13,7 +13,6 @@ const getAllUsersDAO= async (req,res)=>{
 
 }
 
-
 const createUserDAO = async (req, res) => {
     
        const errors = validationResult(req);
