@@ -4,6 +4,7 @@ import {TextField, Button, Select, MenuItem} from "@material-ui/core";
 import * as Yup from "yup"
 import {useDispatch, useSelector} from "react-redux";
 import {signIn} from "../Model/Redux/Actions/AuthActions";
+import "./css/login-signup.css";
 
 //TODO remove the <Pre-tags> when done testing
 
@@ -104,9 +105,9 @@ const Authentication = ({apiCall}) => {
 
 
     return (
-        <div>
+        <div className="outer-wrapper">
             {!isLoggedIn
-                ? <div>
+                ? <div className="inner-wrapper" >
                     <Formik
                         initialValues={{
                             username: "",
@@ -154,7 +155,12 @@ const Authentication = ({apiCall}) => {
                         validationSchema={AuthSchema}
                     >
                         {({values, isSubmitting, resetForm, errors}) => (
-                            <Form>
+                            
+                       
+                            <Form >
+                                  {(authStatus === "Sign up") ? <div>
+                                  <p>Create an account</p>
+                                </div> : <div>Log in</div>}
                                 <div>
                                     <AuthTextField
                                         placeholder="Email"
@@ -189,18 +195,18 @@ const Authentication = ({apiCall}) => {
                                         name="lastName"
                                         type="input"
                                     />
-                                </div> : ""}
+                                </div> : ""}<br/>
                                 {(authStatus === "Sign up") ? <div>
                                     <AuthTextField
                                         placeholder="Year"
                                         name="dateOfBirth[0].year"
                                         type="number"
-                                    />
+                                    /><br/>
                                     <AuthTextField
                                         placeholder="Month"
                                         name="dateOfBirth[0].month"
                                         type="number"
-                                    />
+                                    /><br/>
                                     <AuthTextField
                                         placeholder="Day"
                                         name="dateOfBirth[0].day"
@@ -210,6 +216,7 @@ const Authentication = ({apiCall}) => {
                                 <div>
                                     <Button disabled={isSubmitting} type="submit">{authStatus}</Button>
                                 </div>
+                                
 
                                 <pre>{JSON.stringify(values, null, 2)}</pre>
                                 <pre>{JSON.stringify(errors, null, 2)}</pre>

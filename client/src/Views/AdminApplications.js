@@ -45,11 +45,23 @@ const AdminApplications = ({apiCall}) => {
                         onSubmit={(data, {setSubmitting}) => {
                             setSubmitting(true);
                             let param = "posts"
-                            if (data.competences.length === 2) {
-                                param = "posts/competence/or=" + data.competences[0] + "&=" + data.competences[1];
-                            } else if (data.competences.length === 1) {
+                             if (data.competences.length === 1) {
                                 param = "posts/competence=" + data.competences[0];
                             }
+                            else if (data.competences.length === 2) {
+                                param = "posts/competence=" + data.competences[0] + "&=" + data.competences[1];
+                              
+                            } 
+                            else if (data.competences.length === 3) {
+                                param = "posts/competence=" + data.competences[0]+ "&=" + data.competences[1]+ "&=" + data.competences[2];
+                            }
+                            else if (data.competences.length === 4) {
+                                param = "posts/competence=" + data.competences[0]+ "&=" + data.competences[1]+ "&=" + data.competences[2]+ "&=" + data.competences[3];
+                            }
+                            else if (data.competences.length === 5) {
+                                param = "posts/competence=" + data.competences[0]+ "&=" + data.competences[1]+ "&=" + data.competences[2]+ "&=" + data.competences[3]+ "&=" + data.competences[4];
+                            }
+                              console.log(param)
 
                             const instance = apiCall.apiAxios();
                             instance.get(param).then(r =>( setSubmitting(false), setResult(r.data),setResult(r.data)))

@@ -55,12 +55,17 @@ router.get(
 //GET ALL APPLICATIONS WITH 2 SPECIFIC COMPETENCES (OR function)
 //format: GET: http://localhost:3000/posts/competence={value}or{value}
 //exempel GET: http://localhost:3000/posts/competence/or=comp1&=comp6
-router.get('/competence/or=:competence1&=:competence2', ensureAuthentication, controller.getAllApplicationsWithTwoCompetencesOR);
+//router.get('/competence/or=:competence1&=:competence2', ensureAuthentication, controller.getAllApplicationsWithTwoCompetencesOR);
 
 //GET ALL APPLICATIONS WITH ONE SPECIFIC COMPETENCE
 //format: GET: http://localhost:3000/posts/competence={value}
 //exempel GET: http://localhost:3000/posts/competence=comp1
-router.get('/competence=:competence1', ensureAuthentication, controller.getAllApplicationsWithOneSpecificCompetence);
+router.get('/competence=:competence1&=:competence2&=:competence3&=:competence4&=:competence5', ensureAuthentication, controller.getAllApplicationsWithSpecificCompetence);
+router.get('/competence=:competence1&=:competence2&=:competence3&=:competence4', ensureAuthentication, controller.getAllApplicationsWithSpecificCompetence);
+router.get('/competence=:competence1&=:competence2&=:competence3', ensureAuthentication, controller.getAllApplicationsWithSpecificCompetence);
+router.get('/competence=:competence1&=:competence2', ensureAuthentication, controller.getAllApplicationsWithSpecificCompetence);
+router.get('/competence=:competence1', ensureAuthentication, controller.getAllApplicationsWithSpecificCompetence);
+
 
 //TODO create function: DELETE ALL APPLICATIONS
 
