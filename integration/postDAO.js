@@ -6,7 +6,7 @@ const getAllApplicationsDAO = async (req, res) => {
        const posts = await Post.find();
         res.json(posts);
     } catch (err) {
-        res.json({message: err});
+        res.status(503).json({error: "Service currently unavailable"});
     }
 }
 
@@ -21,28 +21,35 @@ const getAllApplicationsDAO = async (req, res) => {
  * @returns {undefined}
  */
 const createApplicationDAO = async  (req, res) => {
-    console.log(req.body);
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-    const post = new Post({
-        email: req.body.email,
-        competence: req.body.competence,
-        startPeriod: req.body.startPeriod,
-        endPeriod: req.body.endPeriod,
-        dateOfBirth: req.body.dateOfBirth,
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        status: req.body.status
-    });
-    post.save()
-        .then(data => {
-            res.status(200).json(data); //put data on screen
-        })
-        .catch(err => {
-            res.status(400).json(err); //put data on screen
+    try {
+        console.log(req.body);
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const application = await Post.findOne({ email: req.body.email});
+        if (application) {
+            return res.status(400).json({Error:'Application for applicant already exists'});
+        }
+
+        const post = new Post({
+            email: req.body.email,
+            competence: req.body.competence,
+            startPeriod: req.body.startPeriod,
+            endPeriod: req.body.endPeriod,
+            dateOfBirth: req.body.dateOfBirth,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            status: req.body.status
         });
+        post.save()
+            .then(data => {
+                res.status(200).json(data); //put data on screen
+            })
+    } catch (error) {
+        res.status(503).json({error: "Service currently unavailable", detail: ""  + error});
+    }
 };
 
 /**
@@ -65,7 +72,7 @@ const getApplicationWithEmailDAO = async (req, res) => {
         if(post) return res.json(post);
         else return res.status(400).json({"Error": "Application with email does not exist"});
     }catch (err){
-        res.json(err)
+        res.status(503).json({error: "Service currently unavailable", detail: ""  + err});
     }
 }
 
@@ -83,7 +90,7 @@ const getAllApplicationsWithTwoCompetencesORDAO = async (req, res) => {
         const posts = await Post.find({competence: {"$elemMatch": {name: {"$in" :[req.params.competence1, req.params.competence2]}}}} )
         res.json(posts)
     }catch (err){
-        res.json(err)
+        res.status(503).json({error: "Service currently unavailable", detail: ""  + err});
     }
 }
 
@@ -101,7 +108,7 @@ const getAllApplicationsWithOneSpecificCompetenceDAO = async (req, res) => {
         const posts = await Post.find({competence: {"$elemMatch": {name: req.params.competence1}}} )
         res.json(posts)
     }catch (err){
-        res.json(err)
+        res.status(503).json({error: "Service currently unavailable", detail: ""  + err});
     }
 }
 
@@ -127,7 +134,7 @@ const updateApplicationStatusDAO = async (req, res) => {
         const newPost = await Post.findOne(filter);
         res.json(newPost);
     } catch (error) {
-        res.json(error)
+        res.status(503).json({Explanation: ""  + error});
     }
 }
 

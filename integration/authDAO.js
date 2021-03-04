@@ -16,9 +16,8 @@ const getAllUsersDAO= async (req,res)=>{
         const auths = await User.find();
         res.json(auths);
     }catch (err){
-        res.json({ message: err});
+        res.status(503).json({error: "Service currently unavailable"});
     }
-
 }
 
 /**
@@ -33,11 +32,17 @@ const getAllUsersDAO= async (req,res)=>{
  * @returns {undefined}
  */
 const createUserDAO = async (req, res) => {
-    
-       const errors = validationResult(req);
+    try {
+        const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
+
+        const currentUser = await User.findOne({ email: req.body.data.email});
+        if (currentUser) {
+            return res.status(400).json({Error:'E-mail already in use'});
+        }
+
         const user = new User({
             username: req.body.data.username,
             password: req.body.data.password,
@@ -47,33 +52,25 @@ const createUserDAO = async (req, res) => {
             dateOfBirth:req.body.data.dateOfBirth,
             role: req.body.data.role
         });
-    
+
         bcrypt.genSalt(10, (err, salt) => {
             bcrypt.hash(user.password, salt, (err, hash) => {
-              if (err) throw err;
-              user.password = hash;
-              user
+                if (err) throw err;
+                user.password = hash;
+                user
                 .save()
                 .then(data => {
                     res.status(200).json(data); //put data on screen
                 })
-                .catch(err => {
-                    console.log(err.code)
-        
-                    if(err.code === 11000){
-                        res.status(400).json({"errorType": err.name, "code": err.code, "message": "user already exists"}); //handle user signup error
-                    }else{
-                        res.status(400).json(err); //default error message
-                    }
-          });
-    })
-        })}
+            })
+        })
+    } catch (error) {
+        res.status(503).json({error: "Service currently unavailable"});
+    }
+}
   
 
 module.exports = {
     createUserDAO,
     getAllUsersDAO
-
-   
-
 }
