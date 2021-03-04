@@ -31,13 +31,6 @@ router.post(
     '/',
     ensureAuthentication, 
     check('email').isEmail(),
-    check('email').custom(value => {
-        return Post.findOne({ email: value }).then(application => {
-          if (application) {
-            return Promise.reject('Application for applicant already exists');
-          }
-        });
-    }), 
     check('competence.*.name').not().isEmpty().stripLow(true).escape().withMessage("Provide competence name"),
     check('competence.*.year').isInt({ min: 0, max: 99 }),
     check('startPeriod').not().isEmpty().isDate().isAfter().withMessage("must be valid date"),

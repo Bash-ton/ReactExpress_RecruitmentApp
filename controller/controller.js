@@ -19,11 +19,6 @@ const getApplicationWithEmail = async (req, res) => {
    return await postDAO.getApplicationWithEmailDAO(req,res).catch((error)=>{throw error})
 }
 
-const getAllApplicationsWithTwoCompetencesOR = async (req, res) => {
-
-   return await postDAO.getAllApplicationsWithTwoCompetencesORDAO(req,res).catch((error)=>{throw error})
-}
-
 const getAllApplicationsWithSpecificCompetence = async (req, res) => {
    return await postDAO.getAllApplicationsWithSpecificCompetenceDAO (req,res).catch((error)=>{throw error})
 }
@@ -45,7 +40,6 @@ module.exports = {
     getAllApplications,
     createApplication,
     getApplicationWithEmail,
-    getAllApplicationsWithTwoCompetencesOR,
     getAllApplicationsWithSpecificCompetence,
     createUser,
     getAllUsers,

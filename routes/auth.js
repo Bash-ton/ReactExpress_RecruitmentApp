@@ -50,13 +50,6 @@ router.get('/', controller.getAllUsers);
 router.post(
     '/register',
     check('data.email').isEmail(),
-    check('data.email').custom(value => {
-        return User.findOne({ email: value }).then(user => {
-          if (user) {
-            return Promise.reject('E-mail already in use');
-          }
-        });
-      }),
     check('data.password').isLength({ min: 6 }).withMessage('must be at least 6 chars long'),
     check('data.username').not().isEmpty(),
     check('data.firstName').not().isEmpty().not().isNumeric(),
