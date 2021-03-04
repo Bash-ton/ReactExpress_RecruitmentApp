@@ -70,7 +70,7 @@ router.get(
 
 /**
  * GET /posts/competence/or=comp1&=comp6
- * @summary GET request for creating a new application
+ * @summary GET request for retrieving a application with specified competences (atleast 2)
  * @requires express-validator
  * @function
  * @param {string} path - Express path.
@@ -81,7 +81,7 @@ router.get('/competence/or=:competence1&=:competence2', ensureAuthentication, co
 
 /**
  * GET /posts/competence=exampleCompetence
- * @summary GET request for creating a new application
+ * @summary GET request for retrieving a application with specified competences
  * @requires express-validator
  * @function
  * @param {string} path - Express path.
