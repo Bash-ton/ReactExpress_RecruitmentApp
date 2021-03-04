@@ -11,14 +11,27 @@ function Expertise({model, apiCall}) {
     //constants from redux store
     const isLoggedIn = useSelector(state => state.UserReducer.userInfo[0].isLoggedIn);
     const role = useSelector(state => state.UserReducer.userInfo[0].role);
+    const [hasApplication, setHasApplication] = useState(false);
+
+    //event handler checking if user already has made an application
+    const instance2 = apiCall.apiAxios();
+    instance2.get("posts/postEmail=client@kth.se").then(r => (
+        console.log(r.status),
+            console.log(r),
+            setHasApplication(true)
+    )).catch(err => {
+        console.log(err)
+        setHasApplication(false)
+    })
+
 
     //lifecycle methods
-    useEffect(()=>{
-        if( (role !== "client") || (isLoggedIn === false) )
+    useEffect(() => {
+        if ((role !== "client") || (isLoggedIn === false))
             window.location = "/"
     }, [isLoggedIn, role])
-    useEffect(()=>{
-        if( (role !== "client") || (isLoggedIn === false) )
+    useEffect(() => {
+        if ((role !== "client") || (isLoggedIn === false))
             window.location = "/"
     }, [])
 
@@ -42,29 +55,37 @@ function Expertise({model, apiCall}) {
         setExpertice(exp);
     }
     const instance = apiCall.apiAxios();
-    //TODO add user fname, lname, date of birth and start/end period to API call
+
     return (
         <div>
             {((role === "client") && (isLoggedIn === true)) ?
                 <div>
-                <ExpertiseView myExpertise={myExpertise} removeExpertise={n => {
-                    model.removeExpertise(n);
-                    setExpertice([...allExpertise, n])
-                }}/>
-                <AddExpertiseForm expertise={allExpertise} addExpertise={(t, y) => model.addExpertise(t, y)}//TODO add fields: {fname: info.fname, lname: info.lname, dateOfBirth: info.dateOfBirth}
-                                  done={(info) => instance.post('posts',{
-                                      startPeriod: info.start,
-                                      endPeriod: info.end,
-                                      dateOfBirth: {year: info.dateOfBirth.year, month: info.dateOfBirth.month, day:info.dateOfBirth.day},
-                                      status: "unhandled",
-                                      firstName: info.fname,
-                                      lastName: info.lname,
-                                      competence: myExpertise,
-                                      email: info.email,
-                                  })}
-                                  removeOption={(name) => removeSelectedExpertise(name)}
-                /></div>
-            :""}
+                    {!hasApplication ?
+                        <div>
+                            <ExpertiseView myExpertise={myExpertise} removeExpertise={n => {
+                                model.removeExpertise(n);
+                                setExpertice([...allExpertise, n])
+                            }}/>
+                            <AddExpertiseForm expertise={allExpertise}
+                                              addExpertise={(t, y) => model.addExpertise(t, y)}
+                                              done={(info) => instance.post('posts', {
+                                                  startPeriod: info.start,
+                                                  endPeriod: info.end,
+                                                  dateOfBirth: {
+                                                      year: info.dateOfBirth.year,
+                                                      month: info.dateOfBirth.month,
+                                                      day: info.dateOfBirth.day
+                                                  },
+                                                  status: "unhandled",
+                                                  firstName: info.fname,
+                                                  lastName: info.lname,
+                                                  competence: myExpertise,
+                                                  email: info.email,
+                                              })}
+                                              removeOption={(name) => removeSelectedExpertise(name)}
+                            /></div>
+                        : <div>You have already made an application. Please wait for us to give you a response</div>}
+                </div> : ""}
         </div>
     )
 }
@@ -75,17 +96,17 @@ function Expertise({model, apiCall}) {
  * @param removeExpertise method used to remove skills from application
  * @returns {JSX.Element} renders a list of current skills in application
  */
-export const ExpertiseView = ({myExpertise, removeExpertise}) => (
+const ExpertiseView = ({myExpertise, removeExpertise}) => (
     <div>
-        {myExpertise.map(e => 
+        {myExpertise.map(e =>
             <tbody>
-                <tr key={e.name + e.year}>
-                    <td>{e.name}</td>
-                    <td>{e.year}</td>
-                </tr>
-                <button onClick={() => removeExpertise(e.name)}>remove</button>
+            <tr key={e.name + e.year}>
+                <td>{e.name}</td>
+                <td>{e.year}</td>
+            </tr>
+            <button onClick={() => removeExpertise(e.name)}>remove</button>
             </tbody>
-            )}
+        )}
     </div>
 );
 
@@ -98,16 +119,24 @@ export const ExpertiseView = ({myExpertise, removeExpertise}) => (
  * @param removeOption method that removes one available skill from the {expertise} object when that skill already has been added to the form
  * @returns {JSX.Element} render the form to input skills to the application
  */
-export const AddExpertiseForm = ({expertise, addExpertise, done, removeOption}) => {
+ const AddExpertiseForm = ({expertise, addExpertise, done, removeOption}) => {
 
     const userInfo = useSelector(state => state.UserReducer.userInfo)
-   console.log(userInfo)
+    console.log(userInfo)
     const handleSubmit = () => {
         let ans = window.confirm("Are you sure you want to submit your application?");
-        if(ans === true){
-           //console.log(userInfo[0].dateOfBirth);
-           //debugger;
-            done({start: start, end: end, fname: userInfo[0].fname, lname: userInfo[0].lname, status: "unhandled", dateOfBirth:userInfo[0].dateOfBirth, email: userInfo[0].email});
+        if (ans === true) {
+            //console.log(userInfo[0].dateOfBirth);
+            //debugger;
+            done({
+                start: start,
+                end: end,
+                fname: userInfo[0].fname,
+                lname: userInfo[0].lname,
+                status: "unhandled",
+                dateOfBirth: userInfo[0].dateOfBirth,
+                email: userInfo[0].email
+            });
         }
     }
 
@@ -117,18 +146,30 @@ export const AddExpertiseForm = ({expertise, addExpertise, done, removeOption}) 
     const [end, setEnd] = useState("");
     return (
         <div>
-            <input type="number" min="0" placeholder="years of experience" onChange={(event) => setYear(event.target.value)} />
+            <input type="number" min="0" placeholder="years of experience"
+                   onChange={(event) => setYear(event.target.value)}/>
             <select onChange={(event) => setType(event.target.value)}>
                 <option>choose your expertise</option>
                 {expertise.map((k) => <option key={k}>{k}</option>)}
             </select>
-            <button onClick={() => {addExpertise(type, year); removeOption(type)}}>add skill to application</button>
+            <button onClick={() => {
+                addExpertise(type, year);
+                removeOption(type)
+            }}>add skill to application
+            </button>
 
             <div>
                 <br/>
-                <input type="text" min="0" placeholder="available start period" onChange={(event)=>{ setStart(event.target.value) }} />
-                <input type="text" min="0" placeholder="available end period" onChange={(event)=>{ setEnd(event.target.value) }}/>
-                <button onClick={() => {handleSubmit();}}>confirm and send application</button>
+                <input type="text" min="0" placeholder="available start period" onChange={(event) => {
+                    setStart(event.target.value)
+                }}/>
+                <input type="text" min="0" placeholder="available end period" onChange={(event) => {
+                    setEnd(event.target.value)
+                }}/>
+                <button onClick={() => {
+                    handleSubmit();
+                }}>confirm and send application
+                </button>
             </div>
 
 

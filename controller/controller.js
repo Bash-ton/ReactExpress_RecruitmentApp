@@ -20,7 +20,8 @@ const getApplicationWithEmail = async (req, res) => {
 }
 
 const getAllApplicationsWithTwoCompetencesOR = async (req, res) => {
-   return await postDAO.getAllApplicationsDAO(req,res).catch((error)=>{throw error})
+
+   return await postDAO.getAllApplicationsWithTwoCompetencesORDAO(req,res).catch((error)=>{throw error})
 }
 
 const getAllApplicationsWithOneSpecificCompetence = async (req, res) => {

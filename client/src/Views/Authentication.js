@@ -102,9 +102,6 @@ const Authentication = ({apiCall}) => {
         }
     }
 
-    const changeView = (url) => {
-        window.location = url
-    }
 
     return (
         <div>
@@ -132,15 +129,14 @@ const Authentication = ({apiCall}) => {
                                         const instance = apiCall.apiAxios();
                                         instance.post('auth/login', {email: data.email, password: data.password})
                                             .then((response1) => {
-
                                                 dispatch(signIn(response1))
-
                                             }, (error) => {
                                                 console.log(error);
                                             });
 
-                                    }, (error) => {
-                                        console.log(error);
+                                    }, (err) => {
+                                        console.log(err);
+                                        alert("email already in use");
                                     });
                             } else {
                                 const instance = apiCall.apiAxios();
@@ -149,8 +145,8 @@ const Authentication = ({apiCall}) => {
 
                                         dispatch(signIn(response1))
 
-                                    }, (error) => {
-                                        console.log(error);
+                                    }, () => {
+                                        alert("Wrong email and/or password");
                                     });
                             }
                             setSubmitting(false);
