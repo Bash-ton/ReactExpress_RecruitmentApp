@@ -2,7 +2,15 @@ const bcrypt = require('bcrypt');
 const { body, validationResult, check } = require('express-validator');
 const User = require('../model/user');
 
-
+/**
+ * Gets all users from database
+ * @module getAllUsersDAO
+ * @function
+ * @param {Object} req The request.
+ * @param {Object} res The response.
+ * @param {Object} req.body The JSON payload.
+ * @returns {undefined}
+ */
 const getAllUsersDAO= async (req,res)=>{
     try{
         const auths = await User.find();
@@ -13,7 +21,17 @@ const getAllUsersDAO= async (req,res)=>{
 
 }
 
-
+/**
+ * Creates a new user, hashes the users password and saves to database
+ * @module createUserDAO
+ * @function
+ * @requires bcrypt
+ * @requires express-validator
+ * @param {Object} req The request.
+ * @param {Object} res The response.
+ * @param {Object} req.body The JSON payload.
+ * @returns {undefined}
+ */
 const createUserDAO = async (req, res) => {
     
        const errors = validationResult(req);

@@ -73,6 +73,8 @@ const getAllApplicationsWithSpecificCompetenceDAO = async (req, res) => {
     search= [req.params.competence1, req.params.competence2,req.params.competence3,req.params.competence4];
     if(Object.keys(req.params).length===5)
     search= [req.params.competence1, req.params.competence2,req.params.competence3,req.params.competence4,req.params.competence5];
+
+    
         if(Array.isArray(search)){
             try{
         
