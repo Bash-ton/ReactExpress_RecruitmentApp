@@ -66,17 +66,45 @@ const getAllApplicationsWithOneSpecificCompetenceDAO = async (req, res) => {
     }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const updateApplicationStatusDAO = async (req, res) => {
+    const session = await Post.startSession()
+
+    
     try {
+        session.startTransaction()
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
         let filter = {email: req.body.email};
         let update = {status: req.body.status}; 
-        await Post.findOneAndUpdate(filter, update);
-        const newPost = await Post.findOne(filter);
-        res.json(newPost);
+
+        
+        const post = await Post.findOneAndUpdate(filter, update).session(session);
+        res.json(post);
+
+        await session.commitTransaction()
+        session.endSession()
+        res.send('Success')
+
     } catch (error) {
         res.json(error)
     }

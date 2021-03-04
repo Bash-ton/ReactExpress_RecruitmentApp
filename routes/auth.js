@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const { forwardAuthenticated, ensureAuthentication } = require('../util/ensureAuth');
 const { body, validationResult, check } = require('express-validator');
 
-
+const mongoose = require('mongoose');
 //import controllers here
 const controller = require('../controller/controller');
 //import models here
@@ -26,14 +26,15 @@ router.get('/', controller.getAllUsers);
 //create user
 router.post(
     '/register',
-    check('data.email').isEmail(),
+   check('data.email').isEmail(),
     check('data.email').custom(value => {
         return User.findOne({ email: value }).then(user => {
           if (user) {
             return Promise.reject('E-mail already in use');
           }
+        
         });
-      }),
+    }),
     check('data.password').isLength({ min: 6 }).withMessage('must be at least 6 chars long'),
     check('data.username').not().isEmpty(),
     check('data.firstName').not().isEmpty().not().isNumeric(),

@@ -142,6 +142,7 @@ const Authentication = ({apiCall}) => {
                                     }, (error) => {
                                         console.log(error);
                                     });
+                                    
                             } else {
                                 const instance = apiCall.apiAxios();
                                 instance.post('auth/login', {email: data.email, password: data.password})
