@@ -14,3 +14,32 @@ The app should now be hosted on the domain [https://react-express-applicationapp
 
 ## Usage
 Regular clients may signup or login to an existing account. When logged in the client can create an application and submit it. An admin may later login and search through all applications and sort them by skills. Each application has a status which can be viewed and changed by an admin.
+
+## Project Struckture 
+
+**Client**<br />
+-src<br />
+ &nbsp;   &nbsp; -Model: Redux, apicall, model<br />
+ &nbsp;   &nbsp; -View:  Views and css<br />
+ &nbsp;   &nbsp; -app.js: Routing <br />
+   	**Integration:**&nbsp;  All the methods that interact with databse.<br />
+   **Controller:**&nbsp;   Handles forwarding between Integration and Routes.<br />
+   **Model:**&nbsp;        Defines the database shema<br />
+   **Routes:**&nbsp;       Handles all incoming request to appropiate routes.<br />
+   **Util:**&nbsp;         Database connection, Passport local method and Authentication method<br />
+   **app.js:**&nbsp;       Initiates the server. Sends all request to appropriate route in Routes folder.<br />
+
+# Dependencies For Backend
+
+### bcrypt
+  Documentation:   [ttps://www.npmjs.com/package/bcrypt](https://www.npmjs.com/package/bcrypt).
+### express 
+  Documentation:   [https://expressjs.com/en/guide/routing.html](https://expressjs.com/en/guide/routing.html).
+### express-session
+  Documentation:   [https://www.npmjs.com/package/express-session](https://www.npmjs.com/package/express-session)
+### express-validator
+  Documentation:   [https://github.com/validatorjs/validator.js/](https://github.com/validatorjs/validator.js/)
+### mongoose
+  Documentation:   [https://mongoosejs.com/docs/guide.html](https://mongoosejs.com/docs/guide.html)
+### passport
+  Documentation:   [http://www.passportjs.org/docs/](http://www.passportjs.org/docs/)
