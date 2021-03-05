@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
+import { useHistory } from 'react-router-dom';
 
 /**
  * Renders all views related to the client page.
@@ -12,6 +13,7 @@ function Expertise({model, apiCall}) {
     const isLoggedIn = useSelector(state => state.UserReducer.userInfo[0].isLoggedIn);
     const role = useSelector(state => state.UserReducer.userInfo[0].role);
     const [hasApplication, setHasApplication] = useState(false);
+    const history = useHistory();
 
     //event handler checking if user already has made an application
     const instance2 = apiCall.apiAxios();
@@ -20,8 +22,15 @@ function Expertise({model, apiCall}) {
             console.log(r),
             setHasApplication(true)
     )).catch(err => {
-        console.log(err)
         setHasApplication(false)
+        //Validation error
+        if(err.response.status == 400) console.log(err)
+        //All other errors
+        else{
+            history.replace(history.location.pathname, { 
+                errorStatusCode: err.response.status
+            });
+        }
     })
 
 
@@ -81,6 +90,15 @@ function Expertise({model, apiCall}) {
                                                   lastName: info.lname,
                                                   competence: myExpertise,
                                                   email: info.email,
+                                              }).catch(err => {
+                                                  //Validation error
+                                                if(err.response.status == 400) console.log(err)
+                                                //All other errors
+                                                else{
+                                                    history.replace(history.location.pathname, { 
+                                                        errorStatusCode: err.response.status
+                                                    });
+                                                }
                                               })}
                                               removeOption={(name) => removeSelectedExpertise(name)}
                             /></div>

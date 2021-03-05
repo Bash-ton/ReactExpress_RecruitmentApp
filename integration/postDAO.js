@@ -88,9 +88,7 @@ const getApplicationWithEmailDAO = async (req, res) => {
     }
 }
 
-
-
-    /**
+/**
  * Get applications with a given competence
  * @module getAllApplicationsWithSpecificCompetenceDAO
  * @function
@@ -100,46 +98,33 @@ const getApplicationWithEmailDAO = async (req, res) => {
  * @returns {undefined}
  */
 const getAllApplicationsWithSpecificCompetenceDAO = async (req, res) => {
-    console.log(req.params)
-    let search="";
-    if(Object.keys(req.params).length===1)
-    search= req.params.competence1;
-    if(Object.keys(req.params).length===2)
-    search= [req.params.competence1, req.params.competence2];
-    if(Object.keys(req.params).length===3)
-    search= [req.params.competence1, req.params.competence2,req.params.competence3];
-    if(Object.keys(req.params).length===4)
-    search= [req.params.competence1, req.params.competence2,req.params.competence3,req.params.competence4];
-    if(Object.keys(req.params).length===5)
-    search= [req.params.competence1, req.params.competence2,req.params.competence3,req.params.competence4,req.params.competence5];
+    try {
+        console.log(req.params)
+        let search="";
+        if(Object.keys(req.params).length===1)
+        search= req.params.competence1;
+        if(Object.keys(req.params).length===2)
+        search= [req.params.competence1, req.params.competence2];
+        if(Object.keys(req.params).length===3)
+        search= [req.params.competence1, req.params.competence2,req.params.competence3];
+        if(Object.keys(req.params).length===4)
+        search= [req.params.competence1, req.params.competence2,req.params.competence3,req.params.competence4];
+        if(Object.keys(req.params).length===5)
+        search= [req.params.competence1, req.params.competence2,req.params.competence3,req.params.competence4,req.params.competence5];
 
-    
         if(Array.isArray(search)){
-            try{
-        
-                const posts = await Post.find({competence:{ "$size" : search.length,"$not": {"$elemMatch": {name:{"$nin": search}}}}})
-                res.json(posts)
-                console.log(posts)
-            }catch (err){
-                res.json(err)
-                res.status(503).json({error: "Service currently unavailable", detail: ""  + err});
-            }
+            const posts = await Post.find({competence:{ "$size" : search.length,"$not": {"$elemMatch": {name:{"$nin": search}}}}})
+            res.json(posts)
         }
         else{
-            try{
-                console.log(search)
-                const posts = await Post.find({competence: {"$elemMatch": {name: search}}} )
-                res.json(posts)
-            }catch (err){
-                res.json(err)
-                res.status(503).json({error: "Service currently unavailable", detail: ""  + err});
-            }
+            const posts = await Post.find({competence: {"$elemMatch": {name: search}}} )
+            res.json(posts)
         }
-}
-
-
-
-
+    } catch (error) {
+        res.status(503).json({error: "Service currently unavailable", detail: ""  + error});
+    } 
+}  
+ 
 /**
  * Update a application status with a given email
  * @module updateApplicationStatusDAO
@@ -152,8 +137,6 @@ const getAllApplicationsWithSpecificCompetenceDAO = async (req, res) => {
  */
 const updateApplicationStatusDAO = async (req, res) => {
     const session = await Post.startSession()
-
-    
     try {
         session.startTransaction()
         const errors = validationResult(req);

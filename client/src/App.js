@@ -49,7 +49,6 @@ class App extends Component {
                     exact path="/admin/applications"
                     render={() => <AdminApplications apiCall={this.state.apiCall}/>}
                 />
-
             </div>
         );
 
