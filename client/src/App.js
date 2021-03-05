@@ -13,7 +13,7 @@ import Authentication from "./Views/Authentication";
 import SignUpAdmin from "./Views/SignUpAdmin";
 import AdminApplications from "./Views/AdminApplications";
 import Header from "./Views/Header";
-
+import MigrateFromOldDB from "./Views/MigrateFromOldDB";
 /**
  * Main file for the frontend
  * Handles initial import of the model and routing of the frontend app
@@ -48,6 +48,10 @@ class App extends Component {
                 <Route
                     exact path="/admin/applications"
                     render={() => <AdminApplications apiCall={this.state.apiCall}/>}
+                />
+                <Route
+                    exact path="/admin/Migrate"
+                    render={() => <MigrateFromOldDB apiCall={this.state.apiCall}/>}
                 />
 
             </div>
