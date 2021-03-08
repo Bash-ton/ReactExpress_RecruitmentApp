@@ -88,6 +88,7 @@ const getApplicationWithEmailDAO = async (req, res) => {
     }
 }
 
+
 /**
  * Get applications with a given competence
  * @module getAllApplicationsWithSpecificCompetenceDAO
