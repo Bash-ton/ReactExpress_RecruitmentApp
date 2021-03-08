@@ -2,7 +2,11 @@ import React from 'react';
 import { useLocation} from 'react-router-dom';
 import { get } from 'lodash';
 import { Page401, Page404, Page500, Page501, Page503 } from './Views/ErrorPages';
-
+/**
+ * Handles API errors and presents appropriate view.
+ * @param {Object} children 
+ * @returns Graphical view component
+ */
 const ErrorHandler = ({ children }) => {
   const location = useLocation();
 

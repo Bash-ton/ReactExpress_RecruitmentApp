@@ -21,19 +21,6 @@ const getAllUsersDAO= async (req,res)=>{
     }
 }
 
-const getUserWithEmailDAO = async (req, res) => {
-    try{
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-        const user = await User.findOne({ email: req.params.email });
-        if(user) return res.json(user);
-        else return res.status(400).json({"Error": "User with email does not exist"});
-    }catch (err){
-        res.status(503).json({error: "Service currently unavailable", detail: ""  + err});
-    }
-}
 /**
  * Creates a new user, hashes the users password and saves to database
  * @module createUserDAO
@@ -87,7 +74,6 @@ const createUserDAO = async (req, res) => {
   
 
 module.exports = {
-    getUserWithEmailDAO,
     createUserDAO,
     getAllUsersDAO
 }
