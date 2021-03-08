@@ -7,7 +7,7 @@ import {Provider} from "react-redux";
 import {ReduxStore, Persistor} from "./Model/Redux"
 import {BrowserRouter} from "react-router-dom";
 import {PersistGate} from 'redux-persist/integration/react'
-import ErrorHandler from './Views/ErrorHandler'
+import ErrorHandler from './ErrorHandler'
 
 ReactDOM.render(
     <Provider store={ReduxStore}>
