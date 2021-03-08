@@ -1,6 +1,6 @@
 import {Component} from "react";
 import './App.css';
-import { Route } from "react-router-dom"
+import { Route, Switch, Link } from "react-router-dom"
 
 //models
 import ApiCall from './Model/apiCall';
@@ -13,6 +13,7 @@ import Authentication from "./Views/Authentication";
 import SignUpAdmin from "./Views/SignUpAdmin";
 import AdminApplications from "./Views/AdminApplications";
 import Header from "./Views/Header";
+import { Page404 } from "./Views/ErrorPages";
 
 /**
  * Main file for the frontend
@@ -33,6 +34,7 @@ class App extends Component {
                 <header className="recruitmentApp">
                     <Header/>
                 </header>
+                <Switch>
                 <Route
                     exact path="/"
                     render={() => <Authentication apiCall={this.state.apiCall}/>}
@@ -49,6 +51,11 @@ class App extends Component {
                     exact path="/admin/applications"
                     render={() => <AdminApplications apiCall={this.state.apiCall}/>}
                 />
+                <Route
+                    exact path="*"
+                    render={() =><Page404/>}
+                />
+                </Switch>
             </div>
         );
 
