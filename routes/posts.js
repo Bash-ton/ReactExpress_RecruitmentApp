@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { body, validationResult, check } = require('express-validator');
+const {body, validationResult, check} = require('express-validator');
 const Post = require('../model/Post');
-const { ensureAuthentication } = require('../util/ensureAuth');
+const {ensureAuthentication} = require('../util/ensureAuth');
 
 //import controllers here
 const controller = require('../controller/controller');
@@ -29,18 +29,26 @@ router.get('/', ensureAuthentication, controller.getAllApplications);
  */
 router.post(
     '/',
-    ensureAuthentication, 
+    ensureAuthentication,
     check('email').isEmail(),
     check('competence.*.name').not().isEmpty().stripLow(true).escape().withMessage("Provide competence name"),
-    check('competence.*.year').isInt({ min: 0, max: 99 }),
+    check('competence.*.year').isInt({min: 0, max: 99}),
+
     check('startPeriod').not().isEmpty().isDate().isAfter().withMessage("must be valid date"),
     check('endPeriod').not().isEmpty().isDate().isAfter().withMessage("must be valid date"),
-    // TODO check if dateOfBirth is before current date
-    // check('dateOfBirth').not().isEmpty().isDate().withMessage("must be valid date"),
+  // TODO check if dateOfBirth is before current date.
+
+   check('dateOfBirth.*.year').isInt({min:1900, max: 2020}),
+    check('dateOfBirth.*.month').isInt({min:0, max: 12}),
+    check('dateOfBirth.*.day').isInt({min:0, max: 32}),
+
     check('firstName').not().isEmpty().not().isNumeric(),
     check('lastName').not().isEmpty().not().isNumeric(),
-    // The status is either accepted, rejected or unhandled.
+    //The status is either accepted, rejected or unhandled.
     check('status').toLowerCase().not().isEmpty().isIn(['accepted', 'rejected', 'unhandled']),
+
+
+
     controller.createApplication
 );
 
@@ -64,7 +72,6 @@ router.get(
 //TODO ADD GET METHOD TO GET ALL APPLICATIONS WITH 2 SPECIFIC APPLICATIONS (AND function)
 //
 //HERE
-
 
 
 //GET ALL APPLICATIONS WITH 2 SPECIFIC COMPETENCES (OR function)
@@ -96,16 +103,16 @@ router.get('/competence=:competence1', ensureAuthentication, controller.getAllAp
  * @param {callback} ensureAuthentication - Authentication middleware
  */
 router.post(
-    '/application', 
+    '/application',
     ensureAuthentication,
     check('email').isEmail(),
     check('email').custom(value => {
-        return Post.findOne({ email: value }).then(application => {
-          if (!application) {
-            return Promise.reject('Application does not exist');
-          }
+        return Post.findOne({email: value}).then(application => {
+            if (!application) {
+                return Promise.reject('Application does not exist');
+            }
         });
-    }), 
+    }),
     check('status').toLowerCase().not().isEmpty().isIn(['accepted', 'rejected', 'unhandled']),
     controller.updateApplicationStatus
 );
