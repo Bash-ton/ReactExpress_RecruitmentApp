@@ -34,8 +34,11 @@ const createUser= async (req,res)=>{
 const updateApplicationStatus = async (req, res) => {
     return await postDAO.updateApplicationStatusDAO(req, res).catch((error) => {throw error})
 }
-
+const getUserWithEmail = async (req,res)=>{
+    return await authDAO.getUserWithEmailDAO(req,res).catch((error)=>{throw error})
+}
 module.exports = {
+    getUserWithEmail,
     connectToMogoose,
     getAllApplications,
     createApplication,

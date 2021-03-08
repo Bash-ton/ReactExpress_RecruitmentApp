@@ -38,6 +38,16 @@ router.post('/login',
  */
 router.get('/', controller.getAllUsers);
 
+/**
+ * GET /user
+ * @summary GET request for getting  one users
+ * @requires express-validator
+ * @function
+ * @param {string} path - Express path.
+ * @param {callback} controller.getAllUsers - Express middleware.
+ */
+router.get('/user=:email',check('email').isEmail(),ensureAuthentication,controller.getUserWithEmail);
+
 
 /**
  * POST /auth/register

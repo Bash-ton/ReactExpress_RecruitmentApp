@@ -3,6 +3,8 @@ import { Form, Formik, useField } from "formik";
 import {Button, Checkbox, FormControlLabel} from "@material-ui/core";
 import ApplicationList from "./ApplicationList";
 import {useSelector} from "react-redux";
+import Loader from "react-loader-spinner";
+import { useHistory } from 'react-router-dom';
 
 /**
  * Handles the admin page.
@@ -16,6 +18,8 @@ const AdminApplications = ({apiCall}) => {
     const [result, setResult] = useState([])
     const isLoggedIn = useSelector(state => state.UserReducer.userInfo[0].isLoggedIn);
     const role = useSelector(state => state.UserReducer.userInfo[0].role);
+    const history = useHistory();
+    const [isLoading, setLoading] = useState(false);
 
 
     //life cycle methods
@@ -33,6 +37,8 @@ const AdminApplications = ({apiCall}) => {
 
 
     return (
+    <div>
+        {isLoading? <Loader visible={isLoading} type="TailSpin" color="#00BFFF" height={80} width={80}/>:
         <div>
             {(role === "admin") && (isLoggedIn === true)
                 ? <div>
@@ -65,6 +71,17 @@ const AdminApplications = ({apiCall}) => {
 
                             const instance = apiCall.apiAxios();
                             instance.get(param).then(r =>( setSubmitting(false), setResult(r.data),setResult(r.data)))
+                            .catch(err => {
+                                setLoading(isLoading => !isLoading);
+                                //Validation error
+                                if(err.response.status == 400) console.log(err);
+                                //All other errors
+                                else{
+                                    history.replace(history.location.pathname, { 
+                                        errorStatusCode: err.response.status
+                                    });
+                                }
+                            })
                         }}
                     >
                         {({values, isSubmitting, errors}) => (
@@ -86,7 +103,7 @@ const AdminApplications = ({apiCall}) => {
                     {(result.length > 0) ? <ApplicationList apiCall={apiCall} applications={result}/> : ""}
                 </div>
                 : ""}
-        </div>
+        </div>}</div>
     )
 }
 
