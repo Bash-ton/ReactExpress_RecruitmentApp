@@ -32,19 +32,19 @@ const getAllApplicationsDAO = async (req, res) => {
  * @returns {undefined}
  */
 const createApplicationDAO = async  (req, res) => {
+    const session = await Post.startSession()
+    session.startTransaction()
     try {
         console.log(req.body);
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-
-        const application = await Post.findOne({ email: req.body.email});
+        const application = await Post.findOne({ email: req.body.email}).session(session);
         if (application) {
             return res.status(400).json({Error:'Application for applicant already exists'});
         }
-
-        const post = new Post({
+        const post = await Post.create([{
             email: req.body.email,
             competence: req.body.competence,
             startPeriod: req.body.startPeriod,
@@ -53,12 +53,14 @@ const createApplicationDAO = async  (req, res) => {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             status: req.body.status
-        });
-        post.save()
-            .then(data => {
-                res.status(200).json(data); //put data on screen
-            })
+        }], { session: session });
+       // throw "error1"
+        await session.commitTransaction()
+         session.endSession()
+         res.status(200).json(post[0]);
     } catch (error) {
+         await session.abortTransaction();
+        session.endSession();
         res.status(503).json({error: "Service currently unavailable", detail: ""  + error});
     }
 };
@@ -150,12 +152,13 @@ const updateApplicationStatusDAO = async (req, res) => {
         
         const post = await Post.findOneAndUpdate(filter, update).session(session);
         res.json(post);
-
+       // throw "error"
         await session.commitTransaction()
         session.endSession()
         res.send('Success')
-
     } catch (error) {
+        await session.abortTransaction();
+        await session.endSession()
         res.status(503).json({Explanation: ""  + error});
     }
 }
