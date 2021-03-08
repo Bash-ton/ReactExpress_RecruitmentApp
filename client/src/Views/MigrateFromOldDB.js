@@ -2,6 +2,7 @@ import React from 'react'
 import {Field, Form, Formik} from "formik";
 import {TextField, Button} from "@material-ui/core";
 import {signIn} from "../Model/Redux/Actions/AuthActions";
+import ReactFileReader from 'react-file-reader';
 
 const MigrateFromOldDB = ({apiCall}) => {
 
@@ -11,11 +12,474 @@ const MigrateFromOldDB = ({apiCall}) => {
     let incompleteApplications = [];
     let completedUsers = [];
     let completedApplications = [];
+
+    const handleFiles = (files) => {
+
+        var reader = new FileReader();
+        reader.onload = (e) => {
+            // Use reader.result
+            /*   this.setState({
+                   data: reader.result
+               })
+
+             */
+            let num = 1;
+            let str = reader.result.split(";")[0];
+            while (typeof str == "string") {
+                // console.log(str)// andropa här
+                if (str.includes("person") || str.includes("competence_profile") || str.includes("availability")) {
+                    migrationHandler(str)
+                }
+                str = reader.result.split(";")[num++];
+            }
+
+        }
+        reader.readAsText(files[0]);
+    }
+
+    const migrationHandler = (sqlRow) => {
+        let splitByWord = "";
+        let SQLSTATE = "";
+        console.log(sqlRow)
+        if (sqlRow.includes("INSERT INTO person") || sqlRow.includes('INSERT INTO "person"')) {
+            SQLSTATE = "MIGRATE_USER"
+            splitByWord = "person";
+        } else if (sqlRow.includes("INSERT INTO competence_profile") || sqlRow.includes('INSERT INTO "competence_profile"')) {
+            SQLSTATE = "MIGRATE_APPLICATION"
+            splitByWord = "competence_profile";
+        } else {
+            SQLSTATE = "MIGRATE_APPLICATION"
+            splitByWord = "availability";
+        }
+        let sqlValues = sqlRow.split("VALUES");
+        console.log(sqlValues)
+
+        //get the order of the inputs
+        let order = sqlValues[0].split("\\").join("");
+        order = order.split(splitByWord).join("");
+        order = order.split("INSERT INTO");
+        order = order[1].split("(").join("");
+        order = order.split("↵").join("");
+        order = order.split(")").join("");
+        order = order.split('"').join("");
+        order = order.split("’").join("");
+        console.log(order.split("’").join(""))
+        order = order.split(" ").join("");
+        order = order.split(";").join("");
+        order = order.split(",");
+        console.log(order)
+
+
+        //get the inputs
+        sqlValues = sqlValues[1].split("\\").join("");
+        sqlValues = sqlValues.split("(").join("");
+        sqlValues = sqlValues.split(")").join("");
+        sqlValues = sqlValues.split("↵").join("");
+        sqlValues = sqlValues.split('"').join("");
+        sqlValues = sqlValues.split("’").join("");
+        sqlValues = sqlValues.split("'").join("");
+        sqlValues = sqlValues.split(";").join("");
+        console.log(sqlValues)
+        let newData = sqlValues.split(" ").join("");
+        let split = newData.split(",");
+        console.log(split.length)
+
+
+        //save order of inputs that exists
+        let orderOfData = {}
+        let i = 0;
+
+        //TODO
+        if (splitByWord === "person") {
+            order.forEach((val) => {
+                if (val === "_id" && (split[i] !== "NULL")) {
+                    orderOfData.userID = i;
+                } else if (val === "name" && (split[i] !== "NULL")) {
+                    orderOfData.firstname = i;
+                } else if (val === "surname" && (split[i] !== "NULL")) {
+                    orderOfData.lastname = i;
+                } else if (val === "ssn" && (split[i] !== "NULL")) {
+                    orderOfData.dateOfBirth = i;
+                } else if (val === "email" && (split[i] !== "NULL")) {
+                    orderOfData.email = i;
+                } else if (val === "password" && (split[i] !== "NULL")) {
+                    orderOfData.password = i;
+                } else if (val === "role_id" && (split[i] !== "NULL")) {
+                    orderOfData.role = i;
+                } else if (val === "username" && (split[i] !== "NULL")) {
+                    orderOfData.username = i;
+                }
+                i++;
+            })
+        } else if (splitByWord === "competence_profile") {
+            order.forEach((val) => {
+                if (val === "_id" && (split[i] !== "NULL")) {//competence_profile_id
+                    orderOfData.compProfID = i;
+                } else if (val === "person_id" && (split[i] !== "NULL")) {
+                    orderOfData.userID = i;
+                } else if (val === "competence_id" && (split[i] !== "NULL")) {
+                    orderOfData.competenceID = i;
+                } else if (val === "years_of_experience" && (split[i] !== "NULL")) {
+                    orderOfData.compYear = i;
+                }
+                i++;
+            })
+
+        } else {//availability
+            order.forEach((val) => {
+                if (val === "_id" && (split[i] !== "NULL")) {//availability_id
+                    orderOfData.availableID = i;
+                } else if (val === "person_id" && (split[i] !== "NULL")) {
+                    orderOfData.userID = i;
+                } else if (val === "from_date" && (split[i] !== "NULL")) {
+                    orderOfData.fromDate = i;
+                } else if (val === "to_date" && (split[i] !== "NULL")) {
+                    orderOfData.toDate = i;
+                }
+                i++;
+            })
+        }
+
+
+        console.log(orderOfData)
+
+
+        //handle migrate user
+        if (SQLSTATE === "MIGRATE_USER") {//if sql is INSERT INTO "person"
+            console.log(split)
+            //check for stored info -> add info -> is enough -> API, remove errormsg
+            //else store info in array, update errormsg
+            let userInfo = {};
+            incompleteUsers.forEach((user) => {
+                if (user.userID === split[orderOfData.userID]) {//found information
+                    console.log(user)
+                    userInfo = user
+
+
+                }
+
+            })
+            /*TODO use for applications
+            incompleteUsers = incompleteUsers.filter((value) => {
+                return value.userID !== split[orderOfData.userID];
+            })
+
+             */
+
+            console.log(orderOfData)
+            console.log(orderOfData.email);
+            console.log(split[orderOfData.firstname]);
+            if (orderOfData.username >= 0) {
+                userInfo.username = split[orderOfData.username]
+            }
+            if (orderOfData.email >= 0) {
+                userInfo.email = split[orderOfData.email]
+            }
+            if (orderOfData.password >= 0) {
+                userInfo.password = split[orderOfData.password]
+            }
+            if (orderOfData.firstname >= 0) {
+                userInfo.firstName = split[orderOfData.firstname]
+            }
+            if (orderOfData.lastname >= 0) {
+                userInfo.lastName = split[orderOfData.lastname]
+            }
+            if (orderOfData.dateOfBirth >= 0) {
+                userInfo.dateOfBirth = split[orderOfData.dateOfBirth]
+                let dob = split[orderOfData.dateOfBirth].split("-").join("");
+                let year = dob.substring(0, 4);
+                let month = dob.substring(4, 6);
+                let day = dob.substring(6, 8);
+                userInfo.dateOfBirth =
+                    [
+                        {
+                            "year": parseInt(year),
+                            "month": parseInt(month),
+                            "day": parseInt(day)
+                        }
+                    ]
+            }
+            if (orderOfData.role >= 0) {
+                let role;
+                if (parseInt(split[orderOfData.role]) === 1) {
+                    role = "admin";
+                } else {
+                    role = "client";
+                }
+                userInfo.role = role;
+            }
+            console.log(userInfo)
+
+            userInfo.userID = split[orderOfData.userID]
+            console.log(split[orderOfData.userID])
+
+            console.log(Object.keys(userInfo).length)
+            if (Object.keys(userInfo).length < 8) {
+                incompleteUsers.push(userInfo)
+
+                let errorMessage = "The following attributes are missing to be able to migrate this user to the new system:";
+                if (!userInfo.email) {
+                    errorMessage = errorMessage + " email,"
+                }
+                if (!userInfo.username) {
+                    errorMessage = errorMessage + " username,"
+                }
+                if (!userInfo.password) {
+                    errorMessage = errorMessage + " password,"
+                }
+                if (!userInfo.firstName) {
+                    errorMessage = errorMessage + " firstName,"
+                }
+                if (!userInfo.lastName) {
+                    errorMessage = errorMessage + " lastName,"
+                }
+                if (!userInfo.dateOfBirth) {
+                    errorMessage = errorMessage + " dateOfBirth/ssn,"
+                }
+                errorMsgInfo = errorMsgInfo.filter((value) => {
+                    return value.userID !== split[orderOfData.userID];
+                })
+                errorMsgInfo.push({
+                    "userID": split[orderOfData.userID],
+                    "msg": errorMessage
+                })
+                console.log(userInfo)
+                console.log(incompleteUsers)
+            } else {
+                console.log("DONE")
+                errorMsgInfo = errorMsgInfo.filter((value) => {
+                    return value.userID !== split[orderOfData.userID];
+                })
+                //call api
+
+                console.log(userInfo)
+                completedUsers.push(userInfo)
+
+
+                const instance = apiCall.apiAxios();
+
+                instance.post('auth/register', {
+                    "data": {
+                        "username": userInfo.username,
+                        "email": userInfo.email,
+                        "password": userInfo.password,
+                        "firstName": userInfo.firstName,
+                        "lastName": userInfo.lastName,
+                        "dateOfBirth": userInfo.dateOfBirth,
+                        "role": userInfo.role
+
+                    }
+
+                })
+                    .then((response) => {
+                        completedApplications.forEach((application) => {
+                            if (application.userID === split[orderOfData.userID]) {//found information
+                                console.log(application)
+                                console.log(userInfo)
+
+                                //make API call to applications//TODO
+                                const instance = apiCall.apiAxios();
+                                instance.post('posts', {
+                                    startPeriod: application.fromDate,
+                                    endPeriod: application.toDate,
+                                    dateOfBirth: userInfo.dateOfBirth,
+                                    status: "unhandled",
+                                    firstName: userInfo.firstName,
+                                    lastName: userInfo.lastName,
+                                    competence: [{
+                                        name: application.compName,
+                                        year: parseInt(application.compYear)
+                                    }],
+                                    email: userInfo.email,
+                                }).then(() => {
+                                    console.log("application migration success!")
+                                    alert("application migration success!")
+                                }).catch((err) => {
+                                    console.log(err)
+                                    alert("something went wrong")
+                                })
+                                //using {application} and {userInfo}
+                            }
+
+                        })
+
+                    }, (err) => {
+                        console.log(err);
+                        alert("something went wrong");
+                    });
+
+
+            }
+
+
+        } else if (SQLSTATE === "MIGRATE_APPLICATION") {
+            let applicationInfo = {};
+            incompleteApplications.forEach((application) => {
+                if (application.userID === split[orderOfData.userID]) {//found information
+                    console.log(application)
+                    applicationInfo = application
+
+
+                }
+
+            })
+            let competenceName = "";
+
+
+            if (orderOfData.compProfID >= 0) {
+                applicationInfo.compProfID = split[orderOfData.compProfID]
+            }
+            if (orderOfData.userID >= 0) {
+                applicationInfo.userID = split[orderOfData.userID]
+            }
+            if (orderOfData.competenceID >= 0) {
+                applicationInfo.competenceID = split[orderOfData.competenceID]
+                if (split[orderOfData.competenceID] === 1) {
+                    competenceName = "A-skills";
+                    applicationInfo.compName = competenceName;
+                } else {
+                    competenceName = "B-skills";
+                    applicationInfo.compName = competenceName;
+                }
+            }
+            if (orderOfData.compYear >= 0) {
+                applicationInfo.compYear = split[orderOfData.compYear]
+            }
+            if (orderOfData.availableID >= 0) {
+                applicationInfo.availableID = split[orderOfData.availableID]
+            }
+            if (orderOfData.fromDate >= 0) {
+                applicationInfo.fromDate = split[orderOfData.fromDate]
+            }
+            if (orderOfData.toDate >= 0) {
+                applicationInfo.toDate = split[orderOfData.toDate]
+            }
+
+
+            console.log(Object.keys(applicationInfo).length);
+
+            if (Object.keys(applicationInfo).length < 7) {
+                incompleteApplications.push(applicationInfo)
+
+                let errorMessage = "The following attributes are missing to be able to migrate this application to the new system:";
+                if (!applicationInfo.compYear) {
+                    errorMessage = errorMessage + " years_of_experience,"
+                }
+                if (!applicationInfo.fromDate) {
+                    errorMessage = errorMessage + " available from_date,"
+                }
+                if (!applicationInfo.toDate) {
+                    errorMessage = errorMessage + " available to_date,"
+                }
+                if (!applicationInfo.competenceID) {
+                    errorMessage = errorMessage + " competenceID,"
+                }
+
+                errorMsgInfoApplications = errorMsgInfoApplications.filter((value) => {
+                    return value.userID !== split[orderOfData.userID];
+                })
+                errorMsgInfoApplications.push({
+                    "userID": split[orderOfData.userID],
+                    "msg": errorMessage
+                })
+                console.log(applicationInfo)
+                console.log(incompleteApplications)
+            } else {
+                console.log("DONE")
+
+                completedApplications.push(applicationInfo)
+
+                let savedUser = {};
+                completedUsers.forEach((user) => {
+                    if (user.userID === split[orderOfData.userID]) {//found information
+                        console.log(user)
+                        savedUser = user
+                    }
+
+                })
+                errorMsgInfoApplications = errorMsgInfoApplications.filter((value) => {
+                    return value.userID !== split[orderOfData.userID];
+                })
+                if (Object.keys(savedUser).length === 0) {
+                    console.log("CHECK IF EXISTS IN DB INSTEAD AND CALL DB else update error messages")
+                    //call api
+                    //1 get email using applicationInfo.userID
+                    //2 check if user exist and get userinfo from DB
+                    //3 send application to DB
+                    //4 else do nothing
+
+                } else {
+                    console.log("CREATE APPLICATION AND SEND TO DB")
+                    //call api
+
+                    const instance = apiCall.apiAxios();
+                    instance.post('posts', {
+                        startPeriod: applicationInfo.fromDate,
+                        endPeriod: applicationInfo.toDate,
+                        dateOfBirth: savedUser.dateOfBirth,
+                        status: "unhandled",
+                        firstName: savedUser.firstName,
+                        lastName: savedUser.lastName,
+                        competence: [{
+                            name: competenceName,
+                            year: parseInt(applicationInfo.compYear)
+                        }],
+                        email: savedUser.email,
+                    }).then(() => {
+                        console.log("application migration success!")
+                        alert("application migration success!")
+                    }).catch((err) => {
+                        console.log(err)
+                        alert("something went wrong")
+                    })
+                }
+
+
+                console.log(applicationInfo)
+
+                /*
+                                            const instance = apiCall.apiAxios();
+                                            instance.post('auth/register', {
+                                                "data": {
+                                                    "username": userInfo.username,
+                                                    "email": userInfo.email,
+                                                    "password": userInfo.password,
+                                                    "firstName": userInfo.firstName,
+                                                    "lastName": userInfo.lastName,
+                                                    "dateOfBirth": userInfo.dateOfBirth,
+                                                    "role": userInfo.role
+
+                                                }
+
+                                            })
+                                                .then((response) => {
+
+
+                                                }, (err) => {
+                                                    console.log(err);
+                                                    alert("something went wrong");
+                                                });
+
+                 */
+            }
+
+        }
+    }
+
+
     return (
         <div className="wrapper">
+
+            <input type="file" onChange={(event) => {
+                handleFiles(event.target.files)
+            }}/>
             <Formik
                 initialValues={{VALUES: ""}}
                 onSubmit={(data, {setSubmitting, resetForm}) => {
+
+                if(data.VALUES !== ""){
+
+
                     setSubmitting(true);
                     resetForm();
 
@@ -69,7 +533,7 @@ const MigrateFromOldDB = ({apiCall}) => {
                     let i = 0;
 
                     //TODO
-                    if(splitByWord === "person"){
+                    if (splitByWord === "person") {
                         order.forEach((val) => {
                             if (val === "_id" && (split[i] !== "NULL")) {
                                 orderOfData.userID = i;
@@ -90,11 +554,11 @@ const MigrateFromOldDB = ({apiCall}) => {
                             }
                             i++;
                         })
-                    }else if(splitByWord === "competence_profile"){
+                    } else if (splitByWord === "competence_profile") {
                         order.forEach((val) => {
-                            if(val === "_id" && (split[i] !== "NULL")){//competence_profile_id
+                            if (val === "_id" && (split[i] !== "NULL")) {//competence_profile_id
                                 orderOfData.compProfID = i;
-                            }else if (val === "person_id" && (split[i] !== "NULL")) {
+                            } else if (val === "person_id" && (split[i] !== "NULL")) {
                                 orderOfData.userID = i;
                             } else if (val === "competence_id" && (split[i] !== "NULL")) {
                                 orderOfData.competenceID = i;
@@ -104,11 +568,11 @@ const MigrateFromOldDB = ({apiCall}) => {
                             i++;
                         })
 
-                    }else{//availability
+                    } else {//availability
                         order.forEach((val) => {
-                            if(val === "_id" && (split[i] !== "NULL")){//availability_id
+                            if (val === "_id" && (split[i] !== "NULL")) {//availability_id
                                 orderOfData.availableID = i;
-                            }else if (val === "person_id" && (split[i] !== "NULL")) {
+                            } else if (val === "person_id" && (split[i] !== "NULL")) {
                                 orderOfData.userID = i;
                             } else if (val === "from_date" && (split[i] !== "NULL")) {
                                 orderOfData.fromDate = i;
@@ -118,8 +582,6 @@ const MigrateFromOldDB = ({apiCall}) => {
                             i++;
                         })
                     }
-
-
 
 
                     console.log(orderOfData)
@@ -237,7 +699,6 @@ const MigrateFromOldDB = ({apiCall}) => {
                             completedUsers.push(userInfo)
 
 
-
                             const instance = apiCall.apiAxios();
 
                             instance.post('auth/register', {
@@ -253,27 +714,47 @@ const MigrateFromOldDB = ({apiCall}) => {
                                 }
 
                             })
-                            .then((response) => {
-                                completedApplications.forEach((application) => {
-                                    if (application.userID === split[orderOfData.userID]) {//found information
-                                        console.log(application)
+                                .then((response) => {
+                                    completedApplications.forEach((application) => {
+                                        if (application.userID === split[orderOfData.userID]) {//found information
+                                            console.log(application)
 
-                                        //make API call to applications//TODO
-                                        //using {application} and {userInfo}
-                                    }
+                                            //make API call to applications//TODO
+                                            const instance = apiCall.apiAxios();
+                                            instance.post('posts', {
+                                                startPeriod: application.fromDate,
+                                                endPeriod: application.toDate,
+                                                dateOfBirth: userInfo.dateOfBirth,
+                                                status: "unhandled",
+                                                firstName: userInfo.firstName,
+                                                lastName: userInfo.lastName,
+                                                competence: [{
+                                                    name: application.compName,
+                                                    year: parseInt(application.compYear)
+                                                }],
+                                                email: userInfo.email,
+                                            }).then(() => {
+                                                console.log("application migration success!")
+                                                alert("application migration success!")
+                                            }).catch((err) => {
+                                                console.log(err)
+                                                alert("something went wrong")
+                                            })
+                                            //using {application} and {userInfo}
+                                        }
 
-                                })
+                                    })
 
-                            }, (err) => {
-                                console.log(err);
-                                alert("something went wrong");
-                            });
+                                }, (err) => {
+                                    console.log(err);
+                                    alert("something went wrong");
+                                });
 
 
                         }
 
 
-                    }else if(SQLSTATE === "MIGRATE_APPLICATION"){
+                    } else if (SQLSTATE === "MIGRATE_APPLICATION") {
                         let applicationInfo = {};
                         incompleteApplications.forEach((application) => {
                             if (application.userID === split[orderOfData.userID]) {//found information
@@ -287,7 +768,6 @@ const MigrateFromOldDB = ({apiCall}) => {
                         let competenceName = "";
 
 
-
                         if (orderOfData.compProfID >= 0) {
                             applicationInfo.compProfID = split[orderOfData.compProfID]
                         }
@@ -296,10 +776,12 @@ const MigrateFromOldDB = ({apiCall}) => {
                         }
                         if (orderOfData.competenceID >= 0) {
                             applicationInfo.competenceID = split[orderOfData.competenceID]
-                            if(split[orderOfData.competenceID] === 1){
+                            if (split[orderOfData.competenceID] === 1) {
                                 competenceName = "A-skills";
-                            }else{
+                                applicationInfo.compName = competenceName;
+                            } else {
                                 competenceName = "B-skills";
+                                applicationInfo.compName = competenceName;
                             }
                         }
                         if (orderOfData.compYear >= 0) {
@@ -314,7 +796,6 @@ const MigrateFromOldDB = ({apiCall}) => {
                         if (orderOfData.toDate >= 0) {
                             applicationInfo.toDate = split[orderOfData.toDate]
                         }
-
 
 
                         console.log(Object.keys(applicationInfo).length);
@@ -361,10 +842,15 @@ const MigrateFromOldDB = ({apiCall}) => {
                             errorMsgInfoApplications = errorMsgInfoApplications.filter((value) => {
                                 return value.userID !== split[orderOfData.userID];
                             })
-                            if(Object.keys(savedUser).length === 0){
+                            if (Object.keys(savedUser).length === 0) {
                                 console.log("CHECK IF EXISTS IN DB INSTEAD AND CALL DB else update error messages")
                                 //call api
-                            }else{
+                                //1 get email using applicationInfo.userID
+                                //2 check if user exist and get userinfo from DB
+                                //3 send application to DB
+                                //4 else do nothing
+
+                            } else {
                                 console.log("CREATE APPLICATION AND SEND TO DB")
                                 //call api
 
@@ -378,12 +864,12 @@ const MigrateFromOldDB = ({apiCall}) => {
                                     lastName: savedUser.lastName,
                                     competence: [{
                                         name: competenceName,
-                                        year:parseInt(applicationInfo.compYear)
+                                        year: parseInt(applicationInfo.compYear)
                                     }],
                                     email: savedUser.email,
-                                }).then(()=>{
+                                }).then(() => {
                                     console.log("application migration success!")
-                                        alert("application migration success!")
+                                    alert("application migration success!")
                                 }).catch((err) => {
                                     console.log(err)
                                     alert("something went wrong")
@@ -393,39 +879,39 @@ const MigrateFromOldDB = ({apiCall}) => {
 
                             console.log(applicationInfo)
 
-/*
-                            const instance = apiCall.apiAxios();
-                            instance.post('auth/register', {
-                                "data": {
-                                    "username": userInfo.username,
-                                    "email": userInfo.email,
-                                    "password": userInfo.password,
-                                    "firstName": userInfo.firstName,
-                                    "lastName": userInfo.lastName,
-                                    "dateOfBirth": userInfo.dateOfBirth,
-                                    "role": userInfo.role
+                            /*
+                                                        const instance = apiCall.apiAxios();
+                                                        instance.post('auth/register', {
+                                                            "data": {
+                                                                "username": userInfo.username,
+                                                                "email": userInfo.email,
+                                                                "password": userInfo.password,
+                                                                "firstName": userInfo.firstName,
+                                                                "lastName": userInfo.lastName,
+                                                                "dateOfBirth": userInfo.dateOfBirth,
+                                                                "role": userInfo.role
 
-                                }
+                                                            }
 
-                            })
-                                .then((response) => {
+                                                        })
+                                                            .then((response) => {
 
 
-                                }, (err) => {
-                                    console.log(err);
-                                    alert("something went wrong");
-                                });
+                                                            }, (err) => {
+                                                                console.log(err);
+                                                                alert("something went wrong");
+                                                            });
 
- */
+                             */
                         }
 
                     }
 
 
-
                     //make async calls here to auth
                     console.log("submit:", data);
                     setSubmitting(false);
+                }
                 }}
             >
                 {({values, isSubmitting}) => (
@@ -442,7 +928,7 @@ const MigrateFromOldDB = ({apiCall}) => {
                             </div>
 
                             <div>
-                                <Button disabled={isSubmitting} type="submit">Create User</Button>
+                                <Button disabled={isSubmitting} type="submit">Get result</Button>
                             </div>
                             <pre>{JSON.stringify(values, null, 2)}</pre>
                             <pre>Migration issues "users": {JSON.stringify(errorMsgInfo, null, 2)}</pre>
@@ -454,6 +940,8 @@ const MigrateFromOldDB = ({apiCall}) => {
 
 
             </Formik>
+
+
 
 
         </div>
