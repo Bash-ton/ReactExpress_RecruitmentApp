@@ -38,7 +38,7 @@ router.post(
     check('endPeriod').not().isEmpty().isDate().isAfter().withMessage("must be valid date"),
   // TODO check if dateOfBirth is before current date.
 
-   check('dateOfBirth.*.year').isInt({min:1900, max: 2020}),
+    check('dateOfBirth.*.year').isInt({min:1900, max: 2020}),
     check('dateOfBirth.*.month').isInt({min:0, max: 12}),
     check('dateOfBirth.*.day').isInt({min:0, max: 32}),
 
