@@ -222,6 +222,7 @@ const MigrationHandler = (sqlRow, {apiCall}) => {
             errorMsgInfo = errorMsgInfo.filter((value) => {
                 return value.userID !== split[orderOfData.userID];
             })
+
             //call api
 
             console.log(userInfo)
@@ -266,6 +267,10 @@ const MigrationHandler = (sqlRow, {apiCall}) => {
                             }).then(()=>{
                                 console.log("application migration success!")
                                 alert("application migration success!")
+
+                                errorMsgInfoApplications = errorMsgInfoApplications.filter((value) => {
+                                    return value.userID !== split[orderOfData.userID];
+                                })
                             }).catch((err) => {
                                 console.log(err)
                                 alert("something went wrong")
