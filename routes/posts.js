@@ -47,8 +47,6 @@ router.post(
     //The status is either accepted, rejected or unhandled.
     check('status').toLowerCase().not().isEmpty().isIn(['accepted', 'rejected', 'unhandled']),
 
-
-
     controller.createApplication
 );
 
