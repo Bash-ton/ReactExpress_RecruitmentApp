@@ -1,10 +1,21 @@
-import React from 'react'
+import React, {useEffect, useState}  from 'react'
 import {Field, Form, Formik} from "formik";
 import {TextField, Button} from "@material-ui/core";
 import {signIn} from "../Model/Redux/Actions/AuthActions";
 import ReactFileReader from 'react-file-reader';
+import {useSelector} from "react-redux";
 
 const MigrateFromOldDB = ({apiCall}) => {
+    
+    //constants from useState and redux
+    const isLoggedIn = useSelector(state => state.UserReducer.userInfo[0].isLoggedIn);
+    const role = useSelector(state => state.UserReducer.userInfo[0].role);
+
+     //life cycle methods
+     useEffect(() => {
+        if ((role !== "admin") || (isLoggedIn === false))
+            window.location = "/"
+    }, [isLoggedIn, role])
 
     let incompleteUsers = [];
     let errorMsgInfo = [];
