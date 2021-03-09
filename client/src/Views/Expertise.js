@@ -104,6 +104,8 @@ function Expertise({model, apiCall}) {
                                                 }
                                               })}
                                               removeOption={(name) => removeSelectedExpertise(name)}
+                                              setApplicationToCompleted = {() => setHasApplication(!hasApplication)}
+                                              myExpertise={myExpertise}
                             /></div>
                         : <div>You have already made an application. Please wait for us to give you a response</div>}
                 </div> : ""}
@@ -140,15 +142,28 @@ const ExpertiseView = ({myExpertise, removeExpertise}) => (
  * @param removeOption method that removes one available skill from the {expertise} object when that skill already has been added to the form
  * @returns {JSX.Element} render the form to input skills to the application
  */
- const AddExpertiseForm = ({expertise, addExpertise, done, removeOption}) => {
+ const AddExpertiseForm = ({expertise, addExpertise, done, removeOption, setApplicationToCompleted, myExpertise}) => {
 
     const userInfo = useSelector(state => state.UserReducer.userInfo)
     console.log(userInfo)
     const handleSubmit = () => {
-        let ans = window.confirm("Are you sure you want to submit your application?");
+        let comp = '';
+        myExpertise.forEach(el => {
+            comp += "Competence: " + el.name + " ,Years: " + el.year + "\n";
+        });
+        
+        let str1 = "Application";
+        let html = str1.concat("\n", "First name: " + userInfo[0].fname)
+        .concat("\n", "Last name: " + userInfo[0].lname)
+        .concat("\n", "Date of birth: " + userInfo[0].dateOfBirth.year +  "-" + userInfo[0].dateOfBirth.month + "-" + userInfo[0].dateOfBirth.day)
+        .concat("\n", "Email: " + userInfo[0].email)
+        .concat("\n", "Start period: " + start)
+        .concat("\n",  "End period: " + end)
+        .concat("\n", comp)
+        .concat("\n", "Are you sure you want to submit your application?");
+
+        let ans = window.confirm(html);
         if (ans === true) {
-            //console.log(userInfo[0].dateOfBirth);
-            //debugger;
             done({
                 start: start,
                 end: end,
@@ -158,6 +173,7 @@ const ExpertiseView = ({myExpertise, removeExpertise}) => (
                 dateOfBirth: userInfo[0].dateOfBirth,
                 email: userInfo[0].email
             });
+            setApplicationToCompleted();
         }
     }
 

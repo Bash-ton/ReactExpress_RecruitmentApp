@@ -92,10 +92,6 @@ const AdminApplications = ({apiCall}) => {
                                 <CustomCheckboxes name="competences" value="D-skills" type="checkbox" label="D-skills"/>
                                 <CustomCheckboxes name="competences" value="E-skills" type="checkbox" label="E-skills"/>
                                 <Button disabled={isSubmitting} type="submit">Get Applications</Button>
-                                <div>
-                                    <pre>{JSON.stringify(values, null, 2)}</pre>
-                                    <pre>{JSON.stringify(errors, null, 2)}</pre>
-                                </div>
                             </Form>
 
                         )}
