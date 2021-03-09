@@ -68,6 +68,13 @@ router.get(
     controller.getApplicationWithEmail
 );
 
+router.post(
+    '/updateskill',
+    ensureAuthentication,
+    check('email').isEmail(),
+    check('competence').toLowerCase().not().isEmpty(),
+    controller.updateApplicationSkill
+);
 
 //TODO ADD GET METHOD TO GET ALL APPLICATIONS WITH 2 SPECIFIC APPLICATIONS (AND function)
 //
