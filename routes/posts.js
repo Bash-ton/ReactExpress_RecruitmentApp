@@ -42,8 +42,8 @@ router.post(
     check('dateOfBirth.*.month').isInt({min:0, max: 12}),
     check('dateOfBirth.*.day').isInt({min:0, max: 32}),
 
-    check('firstName').not().isEmpty().not().isNumeric(),
-    check('lastName').not().isEmpty().not().isNumeric(),
+    check('firstName').not().isEmpty().isAlpha(),
+    check('lastName').not().isEmpty().isAlpha(),
     //The status is either accepted, rejected or unhandled.
     check('status').toLowerCase().not().isEmpty().isIn(['accepted', 'rejected', 'unhandled']),
 
