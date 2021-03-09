@@ -12,12 +12,14 @@ function Expertise({model, apiCall}) {
     //constants from redux store
     const isLoggedIn = useSelector(state => state.UserReducer.userInfo[0].isLoggedIn);
     const role = useSelector(state => state.UserReducer.userInfo[0].role);
+    const email = useSelector(state => state.UserReducer.userInfo[0].email);
     const [hasApplication, setHasApplication] = useState(false);
     const history = useHistory();
 
     //event handler checking if user already has made an application
     const instance2 = apiCall.apiAxios();
-    instance2.get("posts/postEmail=client@kth.se").then(r => (
+ 
+    instance2.get("posts/postEmail="+email).then(r => (
         console.log(r.status),
             console.log(r),
             setHasApplication(true)

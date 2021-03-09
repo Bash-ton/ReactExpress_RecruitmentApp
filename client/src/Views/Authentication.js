@@ -23,7 +23,6 @@ const Authentication = ({apiCall}) => {
     const isLoggedIn = useSelector(state => state.UserReducer.userInfo[0].isLoggedIn);
     const role = useSelector(state => state.UserReducer.userInfo[0].role);
     const dispatch = useDispatch();
-    //loader??
     const [isLoading, setLoading] = useState(false);
     const history = useHistory();
 

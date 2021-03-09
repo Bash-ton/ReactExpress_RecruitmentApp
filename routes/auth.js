@@ -36,7 +36,7 @@ router.post('/login',
  * @param {string} path - Express path.
  * @param {callback} controller.getAllUsers - Express middleware.
  */
-router.get('/', controller.getAllUsers);
+router.get('/', ensureAuthentication, controller.getAllUsers);
 
 /**
  * GET /user

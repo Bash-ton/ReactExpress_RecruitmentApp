@@ -1,6 +1,9 @@
 import React from 'react';
 import { Link } from "react-router-dom";
-
+/**
+ * View presented when API error occurs.
+ * @returns {JSX} graphical view 
+ */
 export const Page404 = () => (
     <div>
         <h1>404 Error</h1>
@@ -8,6 +11,10 @@ export const Page404 = () => (
         <Link to="/"><button type="button">back to main app</button></Link>
     </div>
 );
+/**
+ * View presented when API error occurs.
+ * @returns {JSX} graphical view 
+ */
 export const Page401 = () => (
     <div>
         <h1>401 Error</h1>
@@ -15,6 +22,10 @@ export const Page401 = () => (
         <Link to="/"><button type="button">back to main app</button></Link>
     </div>
 );
+/**
+ * View presented when API error occurs.
+ * @returns {JSX} graphical view 
+ */
 export const Page500 = () => (
     <div>
         <h1>500 Error</h1>
@@ -22,6 +33,10 @@ export const Page500 = () => (
         <Link to="/"><button type="button">back to main app</button></Link>
     </div>
 );
+/**
+ * View presented when API error occurs.
+ * @returns {JSX} graphical view 
+ */
 export const Page501 = () => (
     <div>
         <h1>501 Error</h1>
@@ -29,6 +44,10 @@ export const Page501 = () => (
         <Link to="/"><button type="button">back to main app</button></Link>
     </div>
 );
+/**
+ * View presented when API error occurs.
+ * @returns {JSX} graphical view 
+ */
 export const Page503 = () => (
     <div>
         <h1>503 Error</h1>
