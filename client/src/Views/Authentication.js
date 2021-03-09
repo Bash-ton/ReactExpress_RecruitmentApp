@@ -250,8 +250,7 @@ const Authentication = ({apiCall}) => {
                                     </div>
                                     
 
-                                    <pre>{JSON.stringify(values, null, 2)}</pre>
-                                    <pre>{JSON.stringify(errors, null, 2)}</pre>
+
 
 
                                     <div onClick={() => {
@@ -269,4 +268,9 @@ const Authentication = ({apiCall}) => {
         </div>
     )
 }
+
+/** DELETE IF NO USE, USED FOR TESTING FORM INPUTS
+ *  <pre>{JSON.stringify(errors, null, 2)}</pre>
+ *  <pre>{JSON.stringify(values, null, 2)}</pre>
+ */
 export default Authentication;
