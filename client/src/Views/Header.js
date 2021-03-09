@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {signOut} from "../Model/Redux/Actions/AuthActions";
 import "./css/Header.css";
@@ -13,7 +13,7 @@ const Header = () => {
     const loginRole = useSelector(state => state.UserReducer.userInfo[0].role);
     const dispatch = useDispatch();
 
-    console.log(loginRole)
+
     return (
         <div className="Header-wrapper">
             <div className="logo">Recruitment Logo Here</div>
@@ -22,6 +22,9 @@ const Header = () => {
                 : ""}
             {loginRole === "admin"
                 ? <button className="migrateButton" onClick={ ()=> { window.location = "/admin/Migrate" }  }>Migrate from old DB</button>
+                : ""}
+            {loginRole === "admin"
+                ? <button className="migrateButton" onClick={ ()=> { window.location = "/admin/applications" }  }>Handle Applications</button>
                 : ""}
         </div>
     )

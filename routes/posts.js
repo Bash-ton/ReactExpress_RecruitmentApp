@@ -32,7 +32,7 @@ router.post(
     ensureAuthentication,
     check('email').isEmail(),
     check('competence.*.name').not().isEmpty().stripLow(true).escape().withMessage("Provide competence name"),
-    check('competence.*.year').isInt({min: 0, max: 99}),
+    check('competence.*.year').isNumeric(),
 
     check('startPeriod').not().isEmpty().isDate().isAfter().withMessage("must be valid date"),
     check('endPeriod').not().isEmpty().isDate().isAfter().withMessage("must be valid date"),

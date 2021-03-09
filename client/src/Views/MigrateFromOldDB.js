@@ -1,11 +1,16 @@
 import React, {useEffect, useState}  from 'react'
 import {Field, Form, Formik} from "formik";
 import {TextField, Button} from "@material-ui/core";
-import {signIn} from "../Model/Redux/Actions/AuthActions";
-import ReactFileReader from 'react-file-reader';
 import {useSelector} from "react-redux";
 
 const MigrateFromOldDB = ({apiCall}) => {
+
+    //life cycle methods
+    useEffect(() => {
+        if ((role !== "admin") || (isLoggedIn === false))
+            window.location = "/"
+    }, [isLoggedIn, role])
+
     
     //constants from useState and redux
     const isLoggedIn = useSelector(state => state.UserReducer.userInfo[0].isLoggedIn);
@@ -31,16 +36,11 @@ const MigrateFromOldDB = ({apiCall}) => {
 
         var reader = new FileReader();
         reader.onload = (e) => {
-            // Use reader.result
-            /*   this.setState({
-                   data: reader.result
-               })
 
-             */
             let num = 1;
             let str = reader.result.split(";")[0];
             while (typeof str == "string") {
-                // console.log(str)// andropa här
+
                 if (str.includes("person") || str.includes("competence_profile") || str.includes("availability")) {
                     migrationHandler(str)
                 }
@@ -387,7 +387,7 @@ const MigrateFromOldDB = ({apiCall}) => {
                         applicationInfo.competenceID = [];
                         applicationInfo.competenceID.push({
                             "name": competenceName,
-                            "year": parseInt(split[orderOfData.compYear])
+                            "year": parseFloat(split[orderOfData.compYear])
                         })
 
                     } else {
@@ -395,7 +395,7 @@ const MigrateFromOldDB = ({apiCall}) => {
                         console.log("old comp: " + applicationInfo.competenceID)
                         applicationInfo.competenceID.push({
                             "name": competenceName,
-                            "year": parseInt(split[orderOfData.compYear])
+                            "year": parseFloat(split[orderOfData.compYear])
                         })
                         console.log(applicationInfo)
                     }
@@ -414,7 +414,7 @@ const MigrateFromOldDB = ({apiCall}) => {
                                 instance.post('posts/updateskill', {
                                     "competence": {
                                         "name": competenceName,
-                                        "year": parseInt(split[orderOfData.compYear])
+                                        "year": parseFloat(split[orderOfData.compYear])
                                     },
                                     "email": val.email,
                                 }).then(() => {
