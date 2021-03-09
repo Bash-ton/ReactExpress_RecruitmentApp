@@ -12,6 +12,9 @@ const MigrateFromOldDB = ({apiCall}) => {
     let incompleteApplications = [];
     let completedUsers = [];
     let completedApplications = [];
+    let compReason = "";
+    let applicationsSentToDB = [];
+    let allEmails = [];
 
     const handleFiles = (files) => {
 
@@ -89,7 +92,7 @@ const MigrateFromOldDB = ({apiCall}) => {
         let orderOfData = {}
         let i = 0;
 
-        //TODO
+
         if (splitByWord === "person") {
             order.forEach((val) => {
                 if (val === "_id" && (split[i] !== "NULL")) {
@@ -147,6 +150,8 @@ const MigrateFromOldDB = ({apiCall}) => {
         //handle migrate user
         if (SQLSTATE === "MIGRATE_USER") {//if sql is INSERT INTO "person"
             console.log(split)
+
+
             //check for stored info -> add info -> is enough -> API, remove errormsg
             //else store info in array, update errormsg
             let userInfo = {};
@@ -159,12 +164,7 @@ const MigrateFromOldDB = ({apiCall}) => {
                 }
 
             })
-            /*TODO use for applications
-            incompleteUsers = incompleteUsers.filter((value) => {
-                return value.userID !== split[orderOfData.userID];
-            })
 
-             */
 
             console.log(orderOfData)
             console.log(orderOfData.email);
@@ -174,6 +174,18 @@ const MigrateFromOldDB = ({apiCall}) => {
             }
             if (orderOfData.email >= 0) {
                 userInfo.email = split[orderOfData.email]
+                //TODO copy
+                let stat = false;
+                allEmails.forEach((val) => {
+                    if (val.userID === split[orderOfData.userID]) {
+                        stat = true;
+                    }
+                })
+                if (stat === false) {
+                    allEmails.push({userID: split[orderOfData.userID], email: split[orderOfData.email]})
+                } else {
+                    stat = false;
+                }
             }
             if (orderOfData.password >= 0) {
                 userInfo.password = split[orderOfData.password]
@@ -272,12 +284,13 @@ const MigrateFromOldDB = ({apiCall}) => {
 
                 })
                     .then((response) => {
+                        let done = false;
                         completedApplications.forEach((application) => {
-                            if (application.userID === split[orderOfData.userID]) {//found information
+                            if (application.userID === split[orderOfData.userID] && done === false) {//found information
                                 console.log(application)
                                 console.log(userInfo)
 
-                                //make API call to applications//TODO
+                                //make API call to applications
                                 const instance = apiCall.apiAxios();
                                 instance.post('posts', {
                                     startPeriod: application.fromDate,
@@ -286,10 +299,7 @@ const MigrateFromOldDB = ({apiCall}) => {
                                     status: "unhandled",
                                     firstName: userInfo.firstName,
                                     lastName: userInfo.lastName,
-                                    competence: [{
-                                        name: application.compName,
-                                        year: parseInt(application.compYear)
-                                    }],
+                                    competence: application.competenceID,
                                     email: userInfo.email,
                                 }).then(() => {
                                     console.log("application migration success!")
@@ -297,14 +307,16 @@ const MigrateFromOldDB = ({apiCall}) => {
                                     errorMsgInfoApplications = errorMsgInfoApplications.filter((value) => {
                                         return value.userID !== split[orderOfData.userID];
                                     })
+                                    applicationsSentToDB.push({id: split[orderOfData.userID]})
                                 }).catch((err) => {
                                     console.log(err)
-                                    alert("something went wrong")
                                 })
                                 //using {application} and {userInfo}
+                                done = true;
                             }
 
                         })
+                        done = false;
 
                     }, (err) => {
                         console.log(err);
@@ -322,7 +334,6 @@ const MigrateFromOldDB = ({apiCall}) => {
                     console.log(application)
                     applicationInfo = application
 
-
                 }
 
             })
@@ -336,14 +347,72 @@ const MigrateFromOldDB = ({apiCall}) => {
                 applicationInfo.userID = split[orderOfData.userID]
             }
             if (orderOfData.competenceID >= 0) {
-                applicationInfo.competenceID = split[orderOfData.competenceID]
-                if (split[orderOfData.competenceID] === 1) {
+
+
+                console.log(split[orderOfData.competenceID])
+                if (parseInt(split[orderOfData.competenceID]) === 1) {
                     competenceName = "A-skills";
                     applicationInfo.compName = competenceName;
                 } else {
                     competenceName = "B-skills";
                     applicationInfo.compName = competenceName;
                 }
+
+
+
+                if (compReason !== "DONE_AND_SENT") {  //TODO copy
+                    if (applicationInfo.competenceID === undefined) {
+                        console.log(applicationInfo)
+                        applicationInfo.competenceID = [];
+                        applicationInfo.competenceID.push({
+                            "name": competenceName,
+                            "year": parseInt(split[orderOfData.compYear])
+                        })
+
+                    } else {
+                        console.log("new comp: " + competenceName)
+                        console.log("old comp: " + applicationInfo.competenceID)
+                        applicationInfo.competenceID.push({
+                            "name": competenceName,
+                            "year": parseInt(split[orderOfData.compYear])
+                        })
+                        console.log(applicationInfo)
+                    }
+                }
+                applicationsSentToDB.forEach((app) => {
+                    if (app.id === split[orderOfData.userID]) {
+
+                        //skip every other step
+                        compReason = "DONE_AND_SENT";
+                        //get email from allemail //TODO update DB
+                        allEmails.forEach((val) => {
+                            if (val.userID === split[orderOfData.userID]) {
+                                //send to DB update post
+                                console.log(val)
+                                const instance = apiCall.apiAxios();
+                                instance.post('posts/updateskill', {
+                                    "competence": {
+                                        "name": competenceName,
+                                        "year": parseInt(split[orderOfData.compYear])
+                                    },
+                                    "email": val.email,
+                                }).then(() => {
+                                    console.log("updated application migration success!")
+                                    alert("updated application migration success!")
+                                }).catch((err) => {
+                                    console.log(err)
+                                    alert("something went wrong in update")
+                                })
+                            }
+                        })
+
+                    }
+                })
+
+
+
+
+
             }
             if (orderOfData.compYear >= 0) {
                 applicationInfo.compYear = split[orderOfData.compYear]
@@ -361,111 +430,104 @@ const MigrateFromOldDB = ({apiCall}) => {
 
             console.log(Object.keys(applicationInfo).length);
 
-            if (Object.keys(applicationInfo).length < 7) {
-                incompleteApplications.push(applicationInfo)
+            if (compReason !== "DONE_AND_SENT") {
+                if (Object.keys(applicationInfo).length < 7) {
+                    incompleteApplications.push(applicationInfo)
 
-                let errorMessage = "The following attributes are missing to be able to migrate this application to the new system:";
-                if (!applicationInfo.compYear) {
-                    errorMessage = errorMessage + " years_of_experience,"
-                }
-                if (!applicationInfo.fromDate) {
-                    errorMessage = errorMessage + " available from_date,"
-                }
-                if (!applicationInfo.toDate) {
-                    errorMessage = errorMessage + " available to_date,"
-                }
-                if (!applicationInfo.competenceID) {
-                    errorMessage = errorMessage + " competenceID,"
-                }
-
-                errorMsgInfoApplications = errorMsgInfoApplications.filter((value) => {
-                    return value.userID !== split[orderOfData.userID];
-                })
-                errorMsgInfoApplications.push({
-                    "userID": split[orderOfData.userID],
-                    "msg": errorMessage
-                })
-                console.log(applicationInfo)
-                console.log(incompleteApplications)
-            } else {
-                console.log("DONE")
-
-                completedApplications.push(applicationInfo)
-
-                let savedUser = {};
-                completedUsers.forEach((user) => {
-                    if (user.userID === split[orderOfData.userID]) {//found information
-                        console.log(user)
-                        savedUser = user
+                    let errorMessage = "The following attributes are missing to be able to migrate this application to the new system:";
+                    if (!applicationInfo.compYear) {
+                        errorMessage = errorMessage + " years_of_experience,"
                     }
-
-                })
-                errorMsgInfoApplications = errorMsgInfoApplications.filter((value) => {
-                    return value.userID !== split[orderOfData.userID];
-                })
-                if (Object.keys(savedUser).length === 0) {
-                    console.log("APPLICATION DONE WAIT FOR USER")
+                    if (!applicationInfo.fromDate) {
+                        errorMessage = errorMessage + " available from_date,"
+                    }
+                    if (!applicationInfo.toDate) {
+                        errorMessage = errorMessage + " available to_date,"
+                    }
+                    if (!applicationInfo.competenceID) {
+                        errorMessage = errorMessage + " competenceID,"
+                    }
 
                     errorMsgInfoApplications = errorMsgInfoApplications.filter((value) => {
                         return value.userID !== split[orderOfData.userID];
                     })
-                    errorMsgInfoApplications.push({userID: applicationInfo.userID, "msg": "This application is ready to migrate to the new DB as soon as user with same userID/person_id has been migrated"})
-
-                } else {
-                    console.log("CREATE APPLICATION AND SEND TO DB")
-                    //call api
-
-                    const instance = apiCall.apiAxios();
-                    instance.post('posts', {
-                        startPeriod: applicationInfo.fromDate,
-                        endPeriod: applicationInfo.toDate,
-                        dateOfBirth: savedUser.dateOfBirth,
-                        status: "unhandled",
-                        firstName: savedUser.firstName,
-                        lastName: savedUser.lastName,
-                        competence: [{
-                            name: competenceName,
-                            year: parseInt(applicationInfo.compYear)
-                        }],
-                        email: savedUser.email,
-                    }).then(() => {
-                        console.log("application migration success!")
-                        alert("application migration success!")
-                    }).catch((err) => {
-                        console.log(err)
-                        alert("something went wrong")
+                    errorMsgInfoApplications.push({
+                        "userID": split[orderOfData.userID],
+                        "msg": errorMessage
                     })
+                    console.log(applicationInfo)
+                    console.log(incompleteApplications)
+                } else {
+                    console.log("DONE")
+
+                    completedApplications.push(applicationInfo)
+
+                    let savedUser = {};
+                    completedUsers.forEach((user) => {
+                        if (user.userID === split[orderOfData.userID]) {//found information
+                            console.log(user)
+                            savedUser = user
+                        }
+
+                    })
+                    errorMsgInfoApplications = errorMsgInfoApplications.filter((value) => {
+                        return value.userID !== split[orderOfData.userID];
+                    })
+                    if (Object.keys(savedUser).length === 0) {
+                        console.log("APPLICATION DONE WAIT FOR USER")
+
+                        errorMsgInfoApplications = errorMsgInfoApplications.filter((value) => {
+                            return value.userID !== split[orderOfData.userID];
+                        })
+                        errorMsgInfoApplications.push({
+                            userID: applicationInfo.userID,
+                            "msg": "This application is ready to migrate to the new DB as soon as user with same userID/person_id has been migrated"
+                        })
+
+                    } else {
+
+                        let skipWriteAgain = false;
+                        console.log(applicationsSentToDB)
+                        console.log(split[orderOfData.userID])
+                        applicationsSentToDB.forEach((val) => {
+                            if (parseInt(val.id) === parseInt(split[orderOfData.userID])) {
+                                console.log(val)
+                                skipWriteAgain = true
+                            }
+                        })
+                        if (skipWriteAgain === false) {
+                            console.log("CREATE APPLICATION AND SEND TO DB")
+                            //call api
+
+                            const instance = apiCall.apiAxios();
+                            instance.post('posts', {
+                                startPeriod: applicationInfo.fromDate,
+                                endPeriod: applicationInfo.toDate,
+                                dateOfBirth: savedUser.dateOfBirth,
+                                status: "unhandled",
+                                firstName: savedUser.firstName,
+                                lastName: savedUser.lastName,
+                                competence: applicationInfo.competenceID,
+                                email: savedUser.email,
+                            }).then(() => {
+                                applicationsSentToDB.push({"id":split[orderOfData.userID]})
+                                console.log("application migration success!")
+                                alert("application migration success!")
+                            }).catch((err) => {
+                                console.log(err)
+                                alert("something went wrong")
+                            })
+                        }
+                        skipWriteAgain = false;
+                    }
+
+
+                    console.log(applicationInfo)
+
                 }
 
-
-                console.log(applicationInfo)
-
-                /*
-                                            const instance = apiCall.apiAxios();
-                                            instance.post('auth/register', {
-                                                "data": {
-                                                    "username": userInfo.username,
-                                                    "email": userInfo.email,
-                                                    "password": userInfo.password,
-                                                    "firstName": userInfo.firstName,
-                                                    "lastName": userInfo.lastName,
-                                                    "dateOfBirth": userInfo.dateOfBirth,
-                                                    "role": userInfo.role
-
-                                                }
-
-                                            })
-                                                .then((response) => {
-
-
-                                                }, (err) => {
-                                                    console.log(err);
-                                                    alert("something went wrong");
-                                                });
-
-                 */
             }
-
+            compReason = "";
         }
     }
 
@@ -482,7 +544,13 @@ const MigrateFromOldDB = ({apiCall}) => {
 
                     setSubmitting(true);
                     resetForm();
-                    if (data.VALUES.length !== 0) {
+
+                    if (data.VALUES.includes("person") || data.VALUES.includes("competence_profile") || data.VALUES.includes("availability")) {
+                        migrationHandler(data.VALUES);
+                    }
+
+
+                    if (false) {
 
 
                         let splitByWord = "";
@@ -857,7 +925,10 @@ const MigrateFromOldDB = ({apiCall}) => {
                                     errorMsgInfoApplications = errorMsgInfoApplications.filter((value) => {
                                         return value.userID !== split[orderOfData.userID];
                                     })
-                                    errorMsgInfoApplications.push({userID: applicationInfo.userID, "msg": "This application is ready to migrate to the new DB as soon as user with same userID/person_id has been migrated"})
+                                    errorMsgInfoApplications.push({
+                                        userID: applicationInfo.userID,
+                                        "msg": "This application is ready to migrate to the new DB as soon as user with same userID/person_id has been migrated"
+                                    })
 
                                 } else {
                                     console.log("CREATE APPLICATION AND SEND TO DB")
@@ -879,6 +950,7 @@ const MigrateFromOldDB = ({apiCall}) => {
                                     }).then(() => {
                                         console.log("application migration success!")
                                         alert("application migration success!")
+                                        applicationsSentToDB.push({"id": applicationInfo.userID})
                                     }).catch((err) => {
                                         console.log(err)
                                         alert("something went wrong")
