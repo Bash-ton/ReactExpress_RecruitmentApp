@@ -163,10 +163,35 @@ const updateApplicationStatusDAO = async (req, res) => {
     }
 }
 
+const updateApplicationSkillDAO = async (req, res) => {
+    const session = await Post.startSession()
+    session.startTransaction()
+    try {
+  
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        let filter = {email: req.body.email};
+        const oldPost = await Post.findOne(filter).session(session);
+        oldPost.competence.push(req.body.competence)
+        console.log(oldPost.competence)
+        let update = {competence: oldPost.competence}; 
+        const post = await Post.findOneAndUpdate(filter, update).session(session);
+        await session.commitTransaction()
+        session.endSession()
+        res.json(post);
+    } catch (error) {
+        await session.abortTransaction();
+        session.endSession()
+        res.status(503).json({Explanation: ""  + error});
+    }
+}
 module.exports = {
     getAllApplicationsDAO,
     createApplicationDAO,
     getApplicationWithEmailDAO,
     getAllApplicationsWithSpecificCompetenceDAO ,
     updateApplicationStatusDAO,
+    updateApplicationSkillDAO
 }

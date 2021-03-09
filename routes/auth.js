@@ -62,8 +62,8 @@ router.post(
     check('data.email').isEmail(),
     check('data.password').isLength({ min: 6 }).withMessage('must be at least 6 chars long'),
     check('data.username').not().isEmpty(),
-    check('data.firstName').not().isEmpty().not().isNumeric(),
-    check('data.lastName').not().isEmpty().not().isNumeric(),
+    check('data.firstName').not().isEmpty().isAlpha(),
+    check('data.lastName').not().isEmpty().isAlpha(),
     controller.createUser)
 
 

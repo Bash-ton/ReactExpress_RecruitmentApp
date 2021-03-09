@@ -82,11 +82,11 @@ function Expertise({model, apiCall}) {
                                               done={(info) => instance.post('posts', {
                                                   startPeriod: info.start,
                                                   endPeriod: info.end,
-                                                  dateOfBirth: {
+                                                  dateOfBirth: [{
                                                       year: info.dateOfBirth.year,
                                                       month: info.dateOfBirth.month,
                                                       day: info.dateOfBirth.day
-                                                  },
+                                                  }],
                                                   status: "unhandled",
                                                   firstName: info.fname,
                                                   lastName: info.lname,
@@ -172,9 +172,10 @@ const ExpertiseView = ({myExpertise, removeExpertise}) => (
                 <option>choose your expertise</option>
                 {expertise.map((k) => <option key={k}>{k}</option>)}
             </select>
-            <button onClick={() => {
+            <button disabled={type === ''} onClick={() => {
                 addExpertise(type, year);
-                removeOption(type)
+                removeOption(type);
+                setType('');
             }}>add skill to application
             </button>
 
