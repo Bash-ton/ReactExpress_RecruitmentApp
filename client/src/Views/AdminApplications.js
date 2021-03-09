@@ -5,7 +5,7 @@ import ApplicationList from "./ApplicationList";
 import {useSelector} from "react-redux";
 import Loader from "react-loader-spinner";
 import { useHistory } from 'react-router-dom';
-
+import "./css/Header.css";
 /**
  * Handles the admin page.
  * A logged in admin may go through all applications and sort by skills
@@ -37,11 +37,11 @@ const AdminApplications = ({apiCall}) => {
 
 
     return (
-    <div>
+    <div className="outer-wrapper">
         {isLoading? <Loader visible={isLoading} type="TailSpin" color="#00BFFF" height={80} width={80}/>:
-        <div>
+        <div >
             {(role === "admin") && (isLoggedIn === true)
-                ? <div>
+                ? <div  >
                     <Formik
                         initialValues={{
 

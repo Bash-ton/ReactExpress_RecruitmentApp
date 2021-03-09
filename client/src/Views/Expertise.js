@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
+import "./css/Header.css";
 import { useHistory } from 'react-router-dom';
 
 /**
@@ -68,7 +69,7 @@ function Expertise({model, apiCall}) {
     const instance = apiCall.apiAxios();
 
     return (
-        <div>
+        <div className="outer-wrapper">
             {((role === "client") && (isLoggedIn === true)) ?
                 <div>
                     {!hasApplication ?
