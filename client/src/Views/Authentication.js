@@ -70,11 +70,13 @@ const Authentication = ({apiCall}) => {
         firstName: (authStatus === "Login")
             ? Yup.string()
             : Yup.string()
-                .required('Required'),
+                .required('Required')
+                .matches(/^(?=.)[a-ö]*$/, "must not contain numbers"),
         lastName: (authStatus === "Login")
             ? Yup.string()
             : Yup.string()
-                .required('Required'),
+                .required('Required')
+                .matches(/^(?=.)[a-ö]*$/, "must not not contain numbers"),
         dateOfBirth: Yup.array()
             .of(
                 Yup.object().shape({
