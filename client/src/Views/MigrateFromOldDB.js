@@ -3,6 +3,11 @@ import {Field, Form, Formik} from "formik";
 import {TextField, Button} from "@material-ui/core";
 import {useSelector} from "react-redux";
 
+/**
+ * handles the migration from the old DB
+ * @param apiCall axios methods used to call the express API
+ * @returns {JSX.Element} a form to input SQL code
+ */
 const MigrateFromOldDB = ({apiCall}) => {
 
     //life cycle methods
