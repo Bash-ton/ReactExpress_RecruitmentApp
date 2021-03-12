@@ -10,7 +10,7 @@ const SignUpAdmin = () =>{
         window.location =  url
     }
     return (
-        <div>
+        <div className="wrapper">
             <Formik
                 initialValues={{ email: "", password: "", adminKey: ""}}
                 onSubmit={( data, { setSubmitting , resetForm}) =>{
@@ -22,13 +22,16 @@ const SignUpAdmin = () =>{
                 } }
             >
                 {({  values, isSubmitting  })  => (
+                    <div >
                     <Form >
+                        <div >
                         <Field
                             placeholder="Email"
                             name="email"
                             type="input"
                             as={TextField}
                         />
+                        </div>
                         <div>
                             <Field
                                 placeholder="Password"
@@ -51,6 +54,7 @@ const SignUpAdmin = () =>{
                         <pre>{JSON.stringify(values, null, 2)}</pre>
 
                     </Form>
+                    </div>
                 )}
 
 

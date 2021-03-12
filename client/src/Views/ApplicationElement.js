@@ -1,4 +1,5 @@
 import React from "react";
+import { useHistory } from 'react-router-dom';
 
 /**
  * This component renders one row in the admin applications list. Each row shows all relevant information about said application
@@ -8,15 +9,22 @@ import React from "react";
  * @constructor
  */
 const ApplicationElement = ({apiCall, item}) => {
-
+    const history = useHistory();
     const updateStatus = (event) => {
         const instance = apiCall.apiAxios();
         instance.post('posts/application', {status: event.target.value, email: item.email})
             .then((response) => {
                 console.log(response)
 
-            }, (error) => {
-                console.log(error);
+            }, (err) => {
+                //Validation error
+                if(err.response.status == 400) console.log("Email is incorrect");
+                //All other errors
+                else{
+                    history.replace(history.location.pathname, { 
+                        errorStatusCode: err.response.status
+                    });
+                }
             });
     }
 

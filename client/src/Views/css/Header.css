@@ -1,4 +1,17 @@
 .Header-wrapper{
     background-color: red;
     height: 100px;
+    text-align: center;
+}
+.authButton{
+    margin-top: 10px;
+}
+.outer-wrapper{
+    display: flex;
+    justify-content: center;
+}
+
+.error{
+    text-align: center;
+    margin-top: 30%;
 }

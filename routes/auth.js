@@ -5,12 +5,20 @@ const bcrypt = require('bcrypt');
 const { forwardAuthenticated, ensureAuthentication } = require('../util/ensureAuth');
 const { body, validationResult, check } = require('express-validator');
 
-const mongoose = require('mongoose');
+
 //import controllers here
 const controller = require('../controller/controller');
 //import models here
 const User = require('../model/user');
 
+/**
+ * POST /auth/login
+ * @summary POST request for authenticating a user
+ * @requires express-validator
+ * @function
+ * @param {string} path - Express path.
+ * @param {callback} controller.getAllUsers - Express middleware.
+ */
 router.post('/login',
   passport.authenticate('local'),
   function(req, res) {
@@ -20,25 +28,42 @@ router.post('/login',
 });
 
 
-//get all users
-router.get('/', controller.getAllUsers);
+/**
+ * GET /auth
+ * @summary GET request for getting all users
+ * @requires express-validator
+ * @function
+ * @param {string} path - Express path.
+ * @param {callback} controller.getAllUsers - Express middleware.
+ */
+router.get('/', ensureAuthentication, controller.getAllUsers);
 
-//create user
+/**
+ * GET /user
+ * @summary GET request for getting  one users
+ * @requires express-validator
+ * @function
+ * @param {string} path - Express path.
+ * @param {callback} controller.getUserWithEmail - Express middleware.
+ */
+router.get('/user=:email',check('email').isEmail(),ensureAuthentication,controller.getUserWithEmail);
+
+
+/**
+ * POST /auth/register
+ * @summary POST request for registering a new user
+ * @requires express-validator
+ * @function
+ * @param {string} path - Express path.
+ * @param {callback} controller.createUser - Express middleware.
+ */
 router.post(
     '/register',
-   check('data.email').isEmail(),
-    check('data.email').custom(value => {
-        return User.findOne({ email: value }).then(user => {
-          if (user) {
-            return Promise.reject('E-mail already in use');
-          }
-        
-        });
-    }),
+    check('data.email').isEmail(),
     check('data.password').isLength({ min: 6 }).withMessage('must be at least 6 chars long'),
     check('data.username').not().isEmpty(),
-    check('data.firstName').not().isEmpty().not().isNumeric(),
-    check('data.lastName').not().isEmpty().not().isNumeric(),
+    check('data.firstName').not().isEmpty().isAlpha(),
+    check('data.lastName').not().isEmpty().isAlpha(),
     controller.createUser)
 
 

@@ -4,6 +4,10 @@ import {TextField, Button, Select, MenuItem} from "@material-ui/core";
 import * as Yup from "yup"
 import {useDispatch, useSelector} from "react-redux";
 import {signIn} from "../Model/Redux/Actions/AuthActions";
+import "./css/login-signup.css";
+import Loader from "react-loader-spinner";
+import { useHistory } from 'react-router-dom';
+
 
 //TODO remove the <Pre-tags> when done testing
 
@@ -20,6 +24,8 @@ const Authentication = ({apiCall}) => {
     const isLoggedIn = useSelector(state => state.UserReducer.userInfo[0].isLoggedIn);
     const role = useSelector(state => state.UserReducer.userInfo[0].role);
     const dispatch = useDispatch();
+    const [isLoading, setLoading] = useState(false);
+    const history = useHistory();
 
 
     //life cycle methods
@@ -64,11 +70,13 @@ const Authentication = ({apiCall}) => {
         firstName: (authStatus === "Login")
             ? Yup.string()
             : Yup.string()
-                .required('Required'),
+                .required('Required')
+                .matches(/^(?=.)[a-ö]*$/, "must not contain numbers"),
         lastName: (authStatus === "Login")
             ? Yup.string()
             : Yup.string()
-                .required('Required'),
+                .required('Required')
+                .matches(/^(?=.)[a-ö]*$/, "must not not contain numbers"),
         dateOfBirth: Yup.array()
             .of(
                 Yup.object().shape({
@@ -102,136 +110,167 @@ const Authentication = ({apiCall}) => {
         }
     }
 
-    const changeView = (url) => {
-        window.location = url
-    }
-
     return (
-        <div>
-            {!isLoggedIn
-                ? <div>
-                    <Formik
-                        initialValues={{
-                            username: "",
-                            email: "",
-                            password: "",
-                            firstName: "",
-                            lastName: "",
-                            dateOfBirth: [{year: "", month: "", day: ""}]
-                        }}
-                        onSubmit={(data, {setSubmitting, resetForm}) => {
-                            setSubmitting(true);
-                            resetForm();
+        <div className="outer-wrapper">
+            {isLoading? <Loader visible={isLoading} type="TailSpin" color="#00BFFF" height={80} width={80}/>:
+            <div>
+                {!isLoggedIn
+                    ? <div className="inner-wrapper" >
+                        <Formik
+                            initialValues={{
+                                username: "",
+                                email: "",
+                                password: "",
+                                firstName: "",
+                                lastName: "",
+                                dateOfBirth: [{year: "", month: "", day: ""}]
+                            }}
+                            onSubmit={(data, {setSubmitting, resetForm}) => {
+                                setSubmitting(true);
+                                resetForm();
+                                setLoading(isLoading => !isLoading);
 
-                            if (authStatus === "Sign up") {
-                                const instance = apiCall.apiAxios();
+                                if (authStatus === "Sign up") {
+                                    const instance = apiCall.apiAxios();
 
-                                instance.post('auth/register', {data})
-                                    .then((response) => {
+                                    instance.post('auth/register', {data})
+                                        .then((response) => {
 
-                                        const instance = apiCall.apiAxios();
-                                        instance.post('auth/login', {email: data.email, password: data.password})
-                                            .then((response1) => {
+                                            const instance = apiCall.apiAxios();
+                                            instance.post('auth/login', {email: data.email, password: data.password})
+                                                .then((response1) => {
+                                                    dispatch(signIn(response1))
+                                                }, (error) => {
+                                                    setLoading(isLoading => !isLoading);
+                                                    //Validation error
+                                                    if(error.response.status == 400) alert("Wrong email and/or password");
+                                                    //All other errors
+                                                    else{
+                                                        history.replace(history.location.pathname, { 
+                                                            errorStatusCode: error.response.status
+                                                        });
+                                                    }
+                                                });
 
-                                                dispatch(signIn(response1))
+                                        }, (err) => {
+                                            setLoading(isLoading => !isLoading);
+                                            //Validation error
+                                            if(err.response.status == 400) alert("email already in use");
+                                            //All other errors
+                                            else{
+                                                history.replace(history.location.pathname, { 
+                                                    errorStatusCode: err.response.status
+                                                });
+                                            }
+                                        });
+                                } else {
+                                    const instance = apiCall.apiAxios();
+                                    instance.post('auth/login', {email: data.email, password: data.password})
+                                        .then((response1) => {
+                                            setLoading(isLoading => !isLoading);
+                                            dispatch(signIn(response1))
 
-                                            }, (error) => {
-                                                console.log(error);
-                                            });
-
-                                    }, (error) => {
-                                        console.log(error);
-                                    });
+                                        }, (error) => {
+                                            setLoading(isLoading => !isLoading);
+                                            //Validation error
+                                            if(error.response.status == 400) alert("Wrong email and/or password");
+                                            //All other errors
+                                            else{
+                                                history.replace(history.location.pathname, { 
+                                                    errorStatusCode: error.response.status
+                                                });
+                                            }
+                                        });
+                                }
+                                setSubmitting(false);
+                            }}
+                            validationSchema={AuthSchema}
+                        >
+                            {({values, isSubmitting, resetForm, errors}) => (
+                                
+                        
+                                <Form >
+                                    {(authStatus === "Sign up") ? <div>
+                                    <p>Create an account</p>
+                                    </div> : <div>Log in</div>}
+                                    <div>
+                                        <AuthTextField
+                                            placeholder="Email"
+                                            name="email"
+                                            type="input"
+                                        />
+                                    </div>
+                                    <div>
+                                        <AuthTextField
+                                            placeholder="Password"
+                                            name="password"
+                                            type="password"
+                                        />
+                                    </div>
+                                    {(authStatus === "Sign up") ? <div>
+                                        <AuthTextField
+                                            placeholder="Username"
+                                            name="username"
+                                            type="input"
+                                        />
+                                    </div> : ""}
+                                    {(authStatus === "Sign up") ? <div>
+                                        <AuthTextField
+                                            placeholder="First Name"
+                                            name="firstName"
+                                            type="input"
+                                        />
+                                    </div> : ""}
+                                    {(authStatus === "Sign up") ? <div>
+                                        <AuthTextField
+                                            placeholder="Last Name"
+                                            name="lastName"
+                                            type="input"
+                                        />
+                                    </div> : ""}<br/>
+                                    {(authStatus === "Sign up") ? <div>
+                                        <AuthTextField
+                                            placeholder="Year"
+                                            name="dateOfBirth[0].year"
+                                            type="number"
+                                        /><br/>
+                                        <AuthTextField
+                                            placeholder="Month"
+                                            name="dateOfBirth[0].month"
+                                            type="number"
+                                        /><br/>
+                                        <AuthTextField
+                                            placeholder="Day"
+                                            name="dateOfBirth[0].day"
+                                            type="number"
+                                        />
+                                    </div> : ""}
+                                    <div>
+                                        <Button disabled={isSubmitting} type="submit">{authStatus}</Button>
+                                    </div>
                                     
-                            } else {
-                                const instance = apiCall.apiAxios();
-                                instance.post('auth/login', {email: data.email, password: data.password})
-                                    .then((response1) => {
-
-                                        dispatch(signIn(response1))
-
-                                    }, (error) => {
-                                        console.log(error);
-                                    });
-                            }
-                            setSubmitting(false);
-                        }}
-                        validationSchema={AuthSchema}
-                    >
-                        {({values, isSubmitting, resetForm, errors}) => (
-                            <Form>
-                                <div>
-                                    <AuthTextField
-                                        placeholder="Email"
-                                        name="email"
-                                        type="input"
-                                    />
-                                </div>
-                                <div>
-                                    <AuthTextField
-                                        placeholder="Password"
-                                        name="password"
-                                        type="password"
-                                    />
-                                </div>
-                                {(authStatus === "Sign up") ? <div>
-                                    <AuthTextField
-                                        placeholder="Username"
-                                        name="username"
-                                        type="input"
-                                    />
-                                </div> : ""}
-                                {(authStatus === "Sign up") ? <div>
-                                    <AuthTextField
-                                        placeholder="First Name"
-                                        name="firstName"
-                                        type="input"
-                                    />
-                                </div> : ""}
-                                {(authStatus === "Sign up") ? <div>
-                                    <AuthTextField
-                                        placeholder="Last Name"
-                                        name="lastName"
-                                        type="input"
-                                    />
-                                </div> : ""}
-                                {(authStatus === "Sign up") ? <div>
-                                    <AuthTextField
-                                        placeholder="Year"
-                                        name="dateOfBirth[0].year"
-                                        type="number"
-                                    />
-                                    <AuthTextField
-                                        placeholder="Month"
-                                        name="dateOfBirth[0].month"
-                                        type="number"
-                                    />
-                                    <AuthTextField
-                                        placeholder="Day"
-                                        name="dateOfBirth[0].day"
-                                        type="number"
-                                    />
-                                </div> : ""}
-                                <div>
-                                    <Button disabled={isSubmitting} type="submit">{authStatus}</Button>
-                                </div>
-
-                                <pre>{JSON.stringify(values, null, 2)}</pre>
-                                <pre>{JSON.stringify(errors, null, 2)}</pre>
 
 
-                                <div onClick={() => {
-                                    handleAuthStatusChange();
-                                    resetForm()
-                                }}>{changeAuthStatus}</div>
-                            </Form>
-                        )}
-                    </Formik>
 
 
-                </div>
-                : ""}
+                                    <div onClick={() => {
+                                        handleAuthStatusChange();
+                                        resetForm()
+                                    }}>{changeAuthStatus}</div>
+                                </Form>
+                            )}
+                        </Formik>
+
+
+                    </div>
+                    : ""}
+            </div>}
         </div>
     )
 }
+
+/** DELETE IF NO USE, USED FOR TESTING FORM INPUTS
+ *  <pre>{JSON.stringify(errors, null, 2)}</pre>
+ *  <pre>{JSON.stringify(values, null, 2)}</pre>
+ */
 export default Authentication;

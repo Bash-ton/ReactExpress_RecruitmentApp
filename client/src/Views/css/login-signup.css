@@ -1,0 +1,12 @@
+.outer-wrapper{
+
+    display: flex;
+  justify-content: center;
+
+
+}
+.inner-wrapper{
+    width: 600px;
+    display: flex;
+    justify-content: center;
+}

@@ -19,12 +19,8 @@ const getApplicationWithEmail = async (req, res) => {
    return await postDAO.getApplicationWithEmailDAO(req,res).catch((error)=>{throw error})
 }
 
-const getAllApplicationsWithTwoCompetencesOR = async (req, res) => {
-   return await postDAO.getAllApplicationsDAO(req,res).catch((error)=>{throw error})
-}
-
-const getAllApplicationsWithOneSpecificCompetence = async (req, res) => {
-   return await postDAO.getAllApplicationsWithOneSpecificCompetenceDAO(req,res).catch((error)=>{throw error})
+const getAllApplicationsWithSpecificCompetence = async (req, res) => {
+   return await postDAO.getAllApplicationsWithSpecificCompetenceDAO (req,res).catch((error)=>{throw error})
 }
 
 const getAllUsers= async(req,res)=>{
@@ -38,15 +34,22 @@ const createUser= async (req,res)=>{
 const updateApplicationStatus = async (req, res) => {
     return await postDAO.updateApplicationStatusDAO(req, res).catch((error) => {throw error})
 }
+const getUserWithEmail = async (req,res)=>{
+    return await authDAO.getUserWithEmailDAO(req,res).catch((error)=>{throw error})
+}
+const updateApplicationSkill = async (req,res)=>{
+    return await postDAO.updateApplicationSkillDAO(req,res).catch((error)=>{throw error})
+}
 
 module.exports = {
+    getUserWithEmail,
     connectToMogoose,
     getAllApplications,
     createApplication,
     getApplicationWithEmail,
-    getAllApplicationsWithTwoCompetencesOR,
-    getAllApplicationsWithOneSpecificCompetence,
+    getAllApplicationsWithSpecificCompetence,
     createUser,
     getAllUsers,
     updateApplicationStatus,
+    updateApplicationSkill,
 }
