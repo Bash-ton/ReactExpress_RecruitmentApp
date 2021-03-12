@@ -13,7 +13,7 @@ const controller = require('../controller/controller');
  * @requires express-validator
  * @function
  * @param {string} path - Express path.
- * @param {callback} controller.createApplication - Express middleware.
+ * @param {callback} controller.getAllApplication - Express middleware.
  * @param {callback} ensureAuthentication - Authentication middleware
  */
 router.get('/', ensureAuthentication, controller.getAllApplications);
@@ -66,6 +66,15 @@ router.get(
     controller.getApplicationWithEmail
 );
 
+/**
+ * POST /posts/postEmail=test@test.com
+ * @summary Post request for updating an applications skill
+ * @requires express-validator
+ * @function
+ * @param {string} path - Express path.
+ * @param {callback} controller.updateApplicationSkill - Express middleware.
+ * @param {callback} ensureAuthentication - Authentication middleware
+ */
 router.post(
     '/updateskill',
     ensureAuthentication,
@@ -73,10 +82,6 @@ router.post(
     check('competence').toLowerCase().not().isEmpty(),
     controller.updateApplicationSkill
 );
-
-//TODO ADD GET METHOD TO GET ALL APPLICATIONS WITH 2 SPECIFIC APPLICATIONS (AND function)
-//
-//HERE
 
 
 //GET ALL APPLICATIONS WITH 2 SPECIFIC COMPETENCES (OR function)
@@ -94,9 +99,6 @@ router.get('/competence=:competence1&=:competence2', ensureAuthentication, contr
 router.get('/competence=:competence1', ensureAuthentication, controller.getAllApplicationsWithSpecificCompetence);
 
 
-//TODO create function: DELETE ALL APPLICATIONS
-
-//TODO create function: DELETE ONE APPLICATION
 
 /**
  * POST /posts/application
