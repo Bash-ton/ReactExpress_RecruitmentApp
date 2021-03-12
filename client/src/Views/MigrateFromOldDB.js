@@ -22,6 +22,7 @@ const MigrateFromOldDB = ({apiCall}) => {
             window.location = "/"
     }, [isLoggedIn, role])
 
+    //constants used for migration
     let incompleteUsers = [];
     let errorMsgInfo = [];
     let errorMsgInfoApplications = [];
@@ -32,6 +33,10 @@ const MigrateFromOldDB = ({apiCall}) => {
     let applicationsSentToDB = [];
     let allEmails = [];
 
+    /**
+     * Handle file inputs and sends one SQL row at a time to the migration handler
+     * @param files a .txt file containing all SQL rows to migrate old DB
+     */
     const handleFiles = (files) => {
 
         var reader = new FileReader();
@@ -51,10 +56,24 @@ const MigrateFromOldDB = ({apiCall}) => {
         reader.readAsText(files[0]);
     }
 
+    /**
+     * Handles migration from old DB to new DB
+     *
+     * 1. Masks away non usable SQL strings and rows not used by new DB.
+     * 2. Determines the order of attributes the SQL input is in.
+     * 3. Determines if a person or application is being migrated.
+     * 4. Determines if enough information has been provided to migrate person or application.
+     * 5. If not enough info has been provided add this information to error info constants.
+     * 6. When enough info is provided migrate this person or application to the new DB and inform the user.
+     *
+     * @param sqlRow takes one SQL query at a time
+     */
     const migrationHandler = (sqlRow) => {
         let splitByWord = "";
         let SQLSTATE = "";
         console.log(sqlRow)
+
+        //determines what kind of SQL query is being made
         if (sqlRow.includes("INSERT INTO person") || sqlRow.includes('INSERT INTO "person"')) {
             SQLSTATE = "MIGRATE_USER"
             splitByWord = "person";
@@ -65,10 +84,12 @@ const MigrateFromOldDB = ({apiCall}) => {
             SQLSTATE = "MIGRATE_APPLICATION"
             splitByWord = "availability";
         }
+
+
         let sqlValues = sqlRow.split("VALUES");
         console.log(sqlValues)
 
-        //get the order of the inputs
+        //mask away not used strings and chars to get the order of the inputs
         let order = sqlValues[0].split("\\").join("");
         order = order.split(splitByWord).join("");
         order = order.split("INSERT INTO");
@@ -84,7 +105,7 @@ const MigrateFromOldDB = ({apiCall}) => {
         console.log(order)
 
 
-        //get the inputs
+        //masks away not used strings and chars to get the values
         sqlValues = sqlValues[1].split("\\").join("");
         sqlValues = sqlValues.split("(").join("");
         sqlValues = sqlValues.split(")").join("");
@@ -104,6 +125,7 @@ const MigrateFromOldDB = ({apiCall}) => {
         let i = 0;
 
 
+        //get the order of the inputs
         if (splitByWord === "person") {
             order.forEach((val) => {
                 if (val === "_id" && (split[i] !== "NULL")) {
@@ -159,11 +181,15 @@ const MigrateFromOldDB = ({apiCall}) => {
 
 
         //handle migrate user
+        //check if has stored info locally
+        //add new info
+        //check if info is enough
+        //add error message or migrate to DB accordingly
         if (SQLSTATE === "MIGRATE_USER") {//if sql is INSERT INTO "person"
             console.log(split)
 
 
-            //check for stored info -> add info -> is enough -> API, remove errormsg
+
             //else store info in array, update errormsg
             let userInfo = {};
             incompleteUsers.forEach((user) => {
@@ -237,6 +263,8 @@ const MigrateFromOldDB = ({apiCall}) => {
             console.log(split[orderOfData.userID])
 
             console.log(Object.keys(userInfo).length)
+
+            //error handling for not enough info to migrate
             if (Object.keys(userInfo).length < 8) {
                 incompleteUsers.push(userInfo)
 
@@ -338,7 +366,10 @@ const MigrateFromOldDB = ({apiCall}) => {
 
             }
 
-
+        // migrate an application
+        // check if has info stored locally
+        //check if info is enough now
+        //update error msg or migrate application
         } else if (SQLSTATE === "MIGRATE_APPLICATION") {
             let applicationInfo = {};
             incompleteApplications.forEach((application) => {

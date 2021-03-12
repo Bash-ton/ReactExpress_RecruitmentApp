@@ -5,7 +5,7 @@ import "./css/Header.css";
 
 /**
  * Header component. Renders logo and logout button
- * @returns {JSX.Element} returns header, logo and logout button
+ * @returns {JSX.Element} returns header, logo and logout button and admin related navbar buttons.
  */
 const Header = () => {
     //constants from redux
