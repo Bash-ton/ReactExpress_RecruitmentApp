@@ -163,6 +163,16 @@ const updateApplicationStatusDAO = async (req, res) => {
     }
 }
 
+/**
+ * Update a application status with a given email
+ * @module updateApplicationSkillAO
+ * @function
+ * @requires express-validator
+ * @param {Object} req The request.
+ * @param {Object} res The response.
+ * @param {Object} req.body The JSON payload.
+ * @returns {undefined}
+ */
 const updateApplicationSkillDAO = async (req, res) => {
     const session = await Post.startSession()
     session.startTransaction()
