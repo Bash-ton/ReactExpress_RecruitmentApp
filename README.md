@@ -22,12 +22,13 @@ Regular clients may signup or login to an existing account. When logged in the c
  &nbsp;   &nbsp; -Model: Redux, apicall, model<br />
  &nbsp;   &nbsp; -View:  Views and css<br />
  &nbsp;   &nbsp; -app.js: Routing <br />
-   	**Integration:**&nbsp;  All the methods that interact with databse.<br />
-   **Controller:**&nbsp;   Handles forwarding between Integration and Routes.<br />
-   **Model:**&nbsp;        Defines the database shema<br />
-   **Routes:**&nbsp;       Handles all incoming request to appropiate routes.<br />
+   	**Integration:**&nbsp; All the methods that interact with the database.<br />
+   **Controller:**&nbsp;   Handles forwarding between Integration and Route.<br />
+   **Model:**&nbsp;        Defines the database schema<br />
+   **Routes:**&nbsp;       Handles all incoming requests to appropriate routes.<br />
    **Util:**&nbsp;         Database connection, Passport local method and Authentication method<br />
-   **app.js:**&nbsp;       Initiates the server. Sends all request to appropriate route in Routes folder.<br />
+   **app.js:**&nbsp;       Initiates the server. Sends all the requests to the appropriate route in the Routes folder.<br />
+
 
 # Dependencies For Backend
 
